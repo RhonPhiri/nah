@@ -1,2 +1,3 @@
-# nah
-This repository is for the New Apostolic Church Hymnal App made with flutter. Check the README file to get more info.
+# NAH
+# Description
+New Apostolic Church Hymnal app is a lightweight, offline hymnal app written in dart (beginner level). Inspired by the [CIS app (Tinashe Mzondiwa)](https://github.com/TinasheMzondiwa?tab=repositories), it includes hymns in various local languages including english.
