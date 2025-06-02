@@ -31,12 +31,7 @@ We reserve the right to update, modify, or discontinue the app at any time witho
 
 ---
 
-## 6. Governing Law
-These Terms are governed by the laws of [Your Country/State], and any disputes shall be resolved in the courts of [Your Jurisdiction].
-
----
-
-## 7. Contact
+## 6. Contact
 If you have any questions or concerns about these terms, you can contact us at:  
 **Email:** [phirirhon42@gmail.com](mailto:phirirhon42@gmail.com)
 
