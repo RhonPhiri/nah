@@ -20,7 +20,7 @@ We do not collect any personal data from users of this app. However, please be a
 
 For more information, please review the privacy policies of these third-party services.
 
-The app does not use analytics, advertising, or any tracking technologies.
+The app does not use advertising, or any tracking technologies.
 
 ---
 
