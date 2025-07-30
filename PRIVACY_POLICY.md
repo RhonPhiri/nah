@@ -16,7 +16,11 @@ Some optional actions—such as viewing this Privacy Policy or the Terms of Serv
 
 ## 2. No Data Collection
 
-We do not collect, store, or transmit any personal data. The app does not use analytics, advertising, or any tracking technologies.
+We do not collect any personal data from users of this app. However, please be aware that third-party libraries and services integrated into the app (such as analytics, crash reporting tools) may collect usage data or other information as described in their respective privacy policies. We do not have access to or control over the data collected by these third parties.
+
+For more information, please review the privacy policies of these third-party services.
+
+The app does not use analytics, advertising, or any tracking technologies.
 
 ---
 
