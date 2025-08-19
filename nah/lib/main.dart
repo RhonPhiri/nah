@@ -5,8 +5,8 @@ import 'ui/ui_export.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-///variable to hold the DatabaseHelper instance
-final dbHelper = DatabaseHelper();
+///variable to hold the NahDb instance
+final nahDb = NahDb();
 Future<void> main() async {
   //initialize
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ Future<void> main() async {
   ]);
 
   //Method to initialize the database before the app starts
-  await initializeApp(dbHelper);
+  await initializeApp(nahDb);
 
   ///Variable to hold the sharedPrefs instance
   final prefs = await SharedPreferences.getInstance();
@@ -30,24 +30,23 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create:
               (context) => HymnalProvider(
-                HymnRepository(HymnService(), dbHelper),
-                HymnalRepository(HymnalService(), dbHelper),
+                HymnRepository(HymnService(), nahDb),
+                HymnalRepository(HymnalService(), nahDb),
               ),
         ),
         ChangeNotifierProvider(
           create:
-              (context) =>
-                  HymnProvider(HymnRepository(HymnService(), dbHelper)),
+              (context) => HymnProvider(HymnRepository(HymnService(), nahDb)),
         ),
         ChangeNotifierProvider(
           create:
-              (context) => HymnCollectionProvider(HymnCollectionRepo(dbHelper)),
+              (context) => HymnCollectionProvider(HymnCollectionRepo(nahDb)),
         ),
         ChangeNotifierProvider(
           create:
               (context) => BookmarkedHymnsProvider(
-                HymnRepository(HymnService(), dbHelper),
-                BookmarkRepository(dbHelper),
+                HymnRepository(HymnService(), nahDb),
+                BookmarkRepository(nahDb),
               ),
         ),
       ],
@@ -56,21 +55,21 @@ Future<void> main() async {
   );
 
   ///close database and release resources
-  // await closeDatabaseOnAppExit(dbHelper);
+  // await closeDatabaseOnAppExit(nahDb);
 }
 
 ///Method to initalize the app & database
-Future<void> initializeApp(DatabaseHelper dbHelper) async {
+Future<void> initializeApp(NahDb nahDb) async {
   try {
-    await dbHelper.database;
+    await nahDb.database;
   } catch (e) {
     debugPrint('Error initializing the database: $e');
   }
 }
 
 // ///method to release database resources upon closing the app
-// Future<void> closeDatabaseOnAppExit(DatabaseHelper dbHelper) async {
-//   await dbHelper.close();
+// Future<void> closeDatabaseOnAppExit(NahDb nahDb) async {
+//   await nahDb.close();
 //   debugPrint('database closed successfully!!!');
 // }
 

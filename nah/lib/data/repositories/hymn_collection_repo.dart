@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:nah/data/db/database_helper.dart';
+import 'package:nah/data/db/nah_db.dart';
 import 'package:nah/data/models/hymn_collection_model.dart';
 import 'package:nah/data/services/result.dart';
 
 class HymnCollectionRepo {
   ///Using depency injection
-  final DatabaseHelper _dbHelper;
+  final NahDb _nahDb;
 
-  HymnCollectionRepo(this._dbHelper);
+  HymnCollectionRepo(this._nahDb);
 
   ///Method to cache hymnCollections into the database
   Future<void> cacheHc(HymnCollection hymnCol) async {
-    await _dbHelper.insertHc(hymnCol);
+    await _nahDb.insertHc(hymnCol);
     debugPrint("HC REPO: ${hymnCol.title} cached to database successfully");
   }
 
   ///Method to delete a hymn collection
   Future<void> deleteHc(HymnCollection hc) async {
-    await _dbHelper.deleteHc(hc);
+    await _nahDb.deleteHc(hc);
     debugPrint("HC REPO: ${hc.title} removed from database successfully");
   }
 
   ///Method to retrieve hymnCols from the database
   Future<Result<List<HymnCollection>>> fetchHcs() async {
     try {
-      final cachedHcs = await _dbHelper.getHcs();
+      final cachedHcs = await _nahDb.getHcs();
 
       if (cachedHcs.isNotEmpty) {
         return Success(cachedHcs);

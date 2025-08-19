@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:nah/data/db/database_helper.dart';
+import 'package:nah/data/db/nah_db.dart';
 import 'package:nah/data/models/hymnal_model.dart';
 import 'package:nah/data/services/assert_version_handler.dart';
 import 'package:nah/data/services/hymnal_service.dart';
@@ -14,11 +14,11 @@ class HymnalRepository {
   //Access the hymnal service
   final HymnalService _hymnalService;
 
-  //access the nah database through the DatabaseHelper()
-  final DatabaseHelper _dbHelper;
+  //access the nah database through the NahDb()
+  final NahDb _nahDb;
 
   //use dependancy injection to improve testing
-  HymnalRepository(this._hymnalService, this._dbHelper);
+  HymnalRepository(this._hymnalService, this._nahDb);
 
   /// Fetches a list of hymnals from the hymnal service.
   ///
@@ -68,12 +68,12 @@ class HymnalRepository {
           ];
 
           //cache the hymnals to database
-          await _dbHelper.insertHymnals(hymnals);
+          await _nahDb.insertHymnals(hymnals);
         }
       }
 
       //load cached hymnals from database
-      final cachedHymnals = await _dbHelper.getHymnals();
+      final cachedHymnals = await _nahDb.getHymnals();
 
       if (cachedHymnals.isNotEmpty) {
         return Success(cachedHymnals);

@@ -3,7 +3,7 @@
 library;
 
 import 'package:flutter/widgets.dart';
-import 'package:nah/data/db/database_helper.dart';
+import 'package:nah/data/db/nah_db.dart';
 import 'package:nah/data/models/hymn_model.dart';
 import 'package:nah/data/models/hymnal_model.dart';
 import 'package:nah/data/repositories/hymn_repository.dart';
@@ -91,7 +91,7 @@ class HymnalProvider extends ChangeNotifier {
 
   @override
   void dispose() async {
-    await DatabaseHelper().close();
+    await NahDb().close();
     print("Hymnal PROVIDER: Resources disposed successfully");
 
     super.dispose();

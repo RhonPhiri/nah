@@ -9,6 +9,6 @@ class HymnService extends BaseService {
   Future<Result<String>> fetchHymns(String language) async {
     final hymnFilePath = 'assets/hymns/$language.json';
     debugPrint("HYMN SERVICE: hymns fetched");
-    return fetchData(hymnFilePath);
+    return fetchEmbeddedData(hymnFilePath);
   }
 }

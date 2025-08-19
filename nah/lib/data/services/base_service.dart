@@ -5,7 +5,7 @@ import 'package:nah/data/services/result.dart';
 //This is an abstract class containing the common properties & variables used by the hymn & hymnal service classes
 abstract class BaseService {
   ///Method to fetch embedded files & pass them to the repository
-  Future<Result<String>> fetchData(String filePath) async {
+  Future<Result<String>> fetchEmbeddedData(String filePath) async {
     try {
       final file = await rootBundle.loadString(filePath, cache: false);
       return Success(file);

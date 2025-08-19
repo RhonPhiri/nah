@@ -6,6 +6,6 @@ class HymnalService extends BaseService {
   //method to fetch hymnals from the repo
   Future<Result<String>> fetchHymnals() async {
     final hymnalFilePath = 'assets/hymnals/hymnals.json';
-    return fetchData(hymnalFilePath);
+    return fetchEmbeddedData(hymnalFilePath);
   }
 }

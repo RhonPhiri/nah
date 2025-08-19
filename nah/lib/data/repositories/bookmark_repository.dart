@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:nah/data/db/database_helper.dart';
+import 'package:nah/data/db/nah_db.dart';
 import 'package:nah/data/models/bookmark_model.dart';
 import 'package:nah/data/services/nah_services_export.dart';
 
 class BookmarkRepository {
-  final DatabaseHelper _dbHelper;
+  final NahDb _nahDb;
 
-  BookmarkRepository(this._dbHelper);
+  BookmarkRepository(this._nahDb);
 
   ///method to cache bookmarks to database
   Future<void> cacheBm(Bookmark bookmark) async {
-    await _dbHelper.insertBm(bookmark);
+    await _nahDb.insertBm(bookmark);
     debugPrint("BM REPO: ${bookmark.title} cached successfully");
   }
 
   ///Method to get bookmarks from database
   Future<Result<List<Bookmark>>> fetchBm() async {
     try {
-      final cachedBms = await _dbHelper.getBm();
+      final cachedBms = await _nahDb.getBm();
       if (cachedBms.isNotEmpty) {
         debugPrint("BM REPO: Bookmarks fetched successfully");
 
@@ -39,7 +39,7 @@ class BookmarkRepository {
 
   ///method to delete bookmarks from database
   Future<void> deleteBm(Bookmark bm) async {
-    await _dbHelper.deleteBm(bm);
+    await _nahDb.deleteBm(bm);
     debugPrint("BM REPO: Bookmarks deleted successfully");
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:nah/data/db/database_helper.dart';
+import 'package:nah/data/db/nah_db.dart';
 import 'package:nah/data/models/hymn_model.dart';
 import 'package:nah/data/services/assert_version_handler.dart';
 import 'package:nah/data/services/nah_services_export.dart';
@@ -11,9 +11,9 @@ class HymnRepository {
   final HymnService hymnService;
 
   //variable to hold the database
-  final DatabaseHelper _dbHelper;
+  final NahDb _nahDb;
 
-  HymnRepository(this.hymnService, this._dbHelper);
+  HymnRepository(this.hymnService, this._nahDb);
 
   /// Fetches a list of hymns based on the specified language.
   ///
@@ -58,12 +58,12 @@ class HymnRepository {
           final hymns = [for (final hymn in hymnData) Hymn.fromMap(hymn)];
 
           //cache the hymns to database
-          await _dbHelper.insertHymns(language.toLowerCase(), hymns);
+          await _nahDb.insertHymns(language.toLowerCase(), hymns);
         }
       }
 
       ///Fetching hymns from database
-      final cachedHymns = await _dbHelper.getHymns(language.toLowerCase());
+      final cachedHymns = await _nahDb.getHymns(language.toLowerCase());
 
       if (cachedHymns.isNotEmpty) {
         debugPrint('Cached hymns fetched');
@@ -89,7 +89,7 @@ class HymnRepository {
     int hymnId,
     String language,
   ) async {
-    final cachedHymns = await _dbHelper.getHymns(language, hymnId: hymnId);
+    final cachedHymns = await _nahDb.getHymns(language, hymnId: hymnId);
     if (cachedHymns.isNotEmpty) {
       return Success(cachedHymns);
     } else {
