@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nah/ui/core/theme/colors.dart';
 
 ///This is a sliver app bar that takes up a title, leading & action buttons respectively.
 ///It allows animation of the title from a bottom to the center offset
@@ -28,10 +29,11 @@ class MySliverAppBar extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.ellipsis,
+                    color: AppColors.white1,
                   ),
                 ),
               ],
@@ -49,6 +51,7 @@ class MySliverAppBar extends StatelessWidget {
             },
             icon: Icon(Icons.arrow_back),
           ),
+
       actions: actions ?? [],
       actionsPadding: const EdgeInsets.only(right: 16),
     );

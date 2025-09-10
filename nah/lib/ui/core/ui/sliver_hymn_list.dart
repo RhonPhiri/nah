@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nah/data/models/hymn_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/ui/core/ui/open_container_transition.dart';
-import 'package:nah/ui/details/widget/details_screen.dart';
 
 ///Widget representing the list of hymns
 class SliverHymnList extends StatelessWidget {
@@ -25,7 +25,18 @@ class SliverHymnList extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
-            openBuilderWidget: DetailsScreen(hymn: hymn),
+
+            // openBuilderWidget: DetailsScreen(hymn: hymn),
+            openBuilderWidget: Placeholder(
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: Text("Go back"),
+                ),
+              ),
+            ),
           );
         },
         separatorBuilder: (context, index) => const Divider(),
