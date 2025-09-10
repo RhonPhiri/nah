@@ -80,9 +80,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     title: Text(hymnal.title),
                     subtitle: Text(hymnal.language),
 
-                    onTap: () => widget.onBoardingViewModel.enterApp.execute(
-                      hymnal.language,
-                    ),
+                    onTap: () =>
+                        widget.onBoardingViewModel.enterApp.execute(hymnal),
                   );
                 },
                 separatorBuilder: (context, index) => const Divider(height: 0),
@@ -97,7 +96,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   void _onResult() {
     if (widget.onBoardingViewModel.enterApp.complete) {
       widget.onBoardingViewModel.enterApp.clearResult();
-      context.go(Routes.home);
+      context.go(Routes.homePath);
     }
   }
 }

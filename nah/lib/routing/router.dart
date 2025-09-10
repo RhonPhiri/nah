@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 GoRouter router(OnBoardingRepository useStatusRepository) => GoRouter(
   debugLogDiagnostics: true,
-  initialLocation: Routes.home,
+  initialLocation: Routes.homePath,
   redirect: _redirect,
   //This is to influence the go_router package to re-eveluate the redirect logic
   //Whether it's on the correct route or not.
@@ -20,7 +20,7 @@ GoRouter router(OnBoardingRepository useStatusRepository) => GoRouter(
   refreshListenable: useStatusRepository,
   routes: [
     GoRoute(
-      path: Routes.onBoarding,
+      path: Routes.onBoardingPath,
       builder: (context, state) {
         final viewModel = OnBoardingViewModel(
           hymnalRepository: context.read(),
@@ -30,17 +30,14 @@ GoRouter router(OnBoardingRepository useStatusRepository) => GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.home,
+      path: Routes.homePath,
       builder: (context, state) {
-        final viewModel = HomeViewModel(
-          hymnalRepository: context.read(),
-          hymnRepository: context.read(),
-        );
+        final viewModel = HomeViewModel(loadHymnUseCase: context.read());
         return HomeScreen(homeViewModel: viewModel);
       },
       routes: [
         GoRoute(
-          path: Routes.hymnalsRelative,
+          path: Routes.hymnalsPath,
           builder: (context, state) => HymnalScreen(),
         ),
       ],
@@ -56,14 +53,14 @@ Future<String?> _redirect(BuildContext context, GoRouterState state) async {
 
   // Varibale to hold the current state, if the user has selected a hymnal and stored the hymnal language
   // but is still on the startup hymnal page
-  final isEnteringApp = state.matchedLocation == Routes.hymnals;
+  final isEnteringApp = state.matchedLocation == Routes.hymnalsPath;
 
   if (isFirstTime) {
-    return Routes.onBoarding;
+    return Routes.onBoardingPath;
   }
 
   if (isEnteringApp) {
-    return Routes.home;
+    return Routes.homePath;
   }
 
   //If no need to redrect

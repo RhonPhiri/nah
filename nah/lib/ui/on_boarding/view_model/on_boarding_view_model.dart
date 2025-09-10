@@ -14,7 +14,7 @@ class OnBoardingViewModel extends ChangeNotifier {
   }) : _hymnalRepository = hymnalRepository,
        _useStatusRepository = useStatusRepository {
     load = Command0(_load)..execute();
-    enterApp = Command1<void, String>(_enterApp);
+    enterApp = Command1<void, Hymnal>(_enterApp);
   }
 
   static const _name = "IntroViewModel";
@@ -23,7 +23,7 @@ class OnBoardingViewModel extends ChangeNotifier {
   List<Hymnal> _hymnals = [];
 
   late Command0 load;
-  late Command1<void, String> enterApp;
+  late Command1<void, Hymnal> enterApp;
 
   List<Hymnal> get hymnals => List.unmodifiable(_hymnals);
 
@@ -44,9 +44,9 @@ class OnBoardingViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _enterApp(String language) async {
+  Future<Result<void>> _enterApp(Hymnal hymnal) async {
     log("Entering app from onBoard screen", name: _name, level: Level.fine);
-    final result = await _useStatusRepository.enterApp(language: language);
+    final result = await _useStatusRepository.enterApp(hymnal: hymnal);
     return result;
   }
 }

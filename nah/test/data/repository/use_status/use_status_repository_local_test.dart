@@ -21,7 +21,7 @@ void main() {
         reason:
             "First time to open the app, expected that the user hasn't clicked any hymnal & stored the language",
       );
-      await onBoardingRepository.enterApp(language: kHymnal.language);
+      await onBoardingRepository.enterApp(hymnal: kHymnal);
       expect(
         await onBoardingRepository.isInitialLaunch,
         false,

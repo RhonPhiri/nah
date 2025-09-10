@@ -1,52 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:nah/data/repository/hymn/hymn_repository.dart';
-import 'package:nah/data/repository/hymnal/hymnal_repository.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
+import 'package:nah/domain/use_cases/hymn/load_hymn_use_case.dart';
 import 'package:nah/utils/command.dart';
 import 'package:nah/utils/log_levels.dart';
 import 'package:nah/utils/result.dart';
 import 'dart:developer' show log;
 
 class HomeViewModel extends ChangeNotifier {
-  HomeViewModel({
-    required HymnalRepository hymnalRepository,
-    required HymnRepository hymnRepository,
-  }) : _hymnalRepository = hymnalRepository,
-       _hymnRepository = hymnRepository {
-    load = Command0<List<Hymn>>(_load)..execute();
+  HomeViewModel({required LoadHymnUseCase loadHymnUseCase})
+    : _loadHymnUseCase = loadHymnUseCase {
+    load = Command0(_load)..execute();
   }
 
   static const _name = "HomeViewModel";
-  final HymnalRepository _hymnalRepository;
-  final HymnRepository _hymnRepository;
 
+  final LoadHymnUseCase _loadHymnUseCase;
+
+  String _selectedHymnalTitle = "";
   List<Hymn> _hymns = [];
 
   late Command0 load;
 
+  String get hymnalTitle => _selectedHymnalTitle;
   List<Hymn> get hymns => List.unmodifiable(_hymns);
 
-  Future<Result<List<Hymn>>> _load() async {
-    final hymnalLanguage = await _hymnalRepository.getStoredHymnaLanguage();
-
-    if (hymnalLanguage is Error<String?>) {
-      log(
-        "Failure getting stored hymnal language",
-        name: _name,
-        level: Level.severe,
-        error: hymnalLanguage.error,
-      );
-    }
-    final result = await _hymnRepository.getHymns(
-      (hymnalLanguage as Success<String?>).data ?? "",
-    );
+  Future<Result> _load() async {
+    final result = await _loadHymnUseCase.fetchHymns();
     switch (result) {
-      case Success<List<Hymn>>():
-        log("Successfully loaded hymns", name: _name, level: Level.fine);
-        _hymns = result.data;
-      case Error<List<Hymn>>():
+      case Success<({String hymnalTitle, List<Hymn> hymns})>():
+        _selectedHymnalTitle = result.data.hymnalTitle;
+        _hymns = result.data.hymns;
+      case Error<({String hymnalTitle, List<Hymn> hymns})>():
         log(
-          "Failure getting hymns from hymn repository",
+          "Error loading HYMNS and SELECTEDHYMNALTITLE",
           name: _name,
           level: Level.severe,
           error: result.error,
