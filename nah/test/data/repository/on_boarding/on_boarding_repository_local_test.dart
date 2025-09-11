@@ -8,6 +8,7 @@ void main() {
   group('OnBoardingRepository tests', () {
     late FakeSharedPreferencesService fakeSharedPrefServices;
     late OnBoardingRepository onBoardingRepository;
+    //ARRANGE
     setUp(() {
       fakeSharedPrefServices = FakeSharedPreferencesService();
       onBoardingRepository = OnBoardingRepositoryLocal(
@@ -15,13 +16,16 @@ void main() {
       );
     });
     test('Test fetching stored hymnal language', () async {
+      //ASSERT
       expect(
         await onBoardingRepository.isInitialLaunch,
         true,
         reason:
             "First time to open the app, expected that the user hasn't clicked any hymnal & stored the language",
       );
+      //ACT
       await onBoardingRepository.enterApp(hymnal: kHymnal);
+      //ASSERT
       expect(
         await onBoardingRepository.isInitialLaunch,
         false,

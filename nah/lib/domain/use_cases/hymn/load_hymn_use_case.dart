@@ -12,6 +12,7 @@ class LoadHymnUseCase {
     required HymnalRepository hymnalRepository,
   }) : _hymnRepository = hymnRepository,
        _hymnalRepository = hymnalRepository;
+
   static const _name = "LoadHymnUseCase";
   final HymnRepository _hymnRepository;
   final HymnalRepository _hymnalRepository;
