@@ -40,4 +40,39 @@ class HomeViewModel extends ChangeNotifier {
     }
     return result;
   }
+
+  List<Hymn> filterHymnList(String query, bool searchingHymnId) {
+    return hymns.where((hymn) {
+      // Fetching the lyrics. First, fetching the verses then chorus
+      // WAYS TO WRITE THIS
+      // 1ST WAY //
+      // final verses =
+      //     (hymn.lyrics['verses'] as List<dynamic>?)?.map(
+      //       (verse) => verse.toString(),
+      //     ) ??
+      //     [];
+      //
+      // final chorus = hymn.lyrics['chorus']?.toString() ?? '';
+
+      // 2ND WAY //
+      final verses = (hymn.lyrics['verses'] is List)
+          ? (hymn.lyrics['verses'] as List)
+                .map((verse) => verse.toString())
+                .toList()
+          : <String>[];
+
+      final chorus = hymn.lyrics['chorus'] as String? ?? '';
+
+      final lowerCaseQuery = query.toLowerCase();
+
+      /// If searchHymnId is true then filter the hymnsbased on the id else, based on the title or lyrics
+      return searchingHymnId
+          ? hymn.id.toString().startsWith(lowerCaseQuery)
+          : hymn.title.toLowerCase().contains(lowerCaseQuery) ||
+                verses.any(
+                  (verse) => verse.toLowerCase().contains(lowerCaseQuery),
+                ) ||
+                chorus.toLowerCase().contains(lowerCaseQuery);
+    }).toList();
+  }
 }

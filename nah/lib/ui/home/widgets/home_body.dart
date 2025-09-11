@@ -16,8 +16,11 @@ class HomeBody extends StatelessWidget {
         return CustomScrollView(
           // controller: _scrollController,
           slivers: [
-            HomeAppBar(title: homeViewModel.hymnalTitle),
-            SliverHymnList(hymns: homeViewModel.hymns),
+            HomeAppBar(homeViewModel: homeViewModel),
+            SliverHymnList(
+              key: ValueKey("HOME_SCREEN_HYMN_LIST"),
+              hymns: homeViewModel.hymns,
+            ),
           ],
         );
       },

@@ -3,6 +3,7 @@ import 'package:nah/ui/core/ui/error_widget.dart';
 import 'package:nah/ui/home/view_models/home_view_model.dart';
 import 'package:nah/ui/home/widgets/drawer/nah_drawer.dart';
 import 'package:nah/ui/home/widgets/home_body.dart';
+import 'package:nah/ui/home/widgets/search/search_hymn_delegate.dart';
 
 /// Main screen for displaying hymns and searching/selecting hymnals.
 
@@ -90,6 +91,17 @@ class _HymnScreenState extends State<HomeScreen> {
       //         ),
       //         child: Icon(Icons.dialpad),
       //       ),
+      floatingActionButton: FloatingActionButton(
+        key: ValueKey("searchHymnId"),
+        onPressed: () => showSearch(
+          context: context,
+          delegate: SearchHymnDelegate(
+            searchingHymnId: true,
+            homeViewModel: widget.homeViewModel,
+          ),
+        ),
+        child: Icon(Icons.dialpad),
+      ),
     );
   }
 }

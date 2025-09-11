@@ -31,7 +31,7 @@ class SliverHymnList extends StatelessWidget {
               child: Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    context.pop();
+                    context.pop(context);
                   },
                   child: Text("Go back"),
                 ),
