@@ -77,10 +77,7 @@ class _HymnScreenState extends State<HomeScreen> {
           }
           return child!;
         },
-        child: HomeBody(
-          hymnalTitle: "hymnalTitle",
-          homeViewModel: widget.homeViewModel,
-        ),
+        child: HomeBody(homeViewModel: widget.homeViewModel),
       ),
       // Search hymn number using the FAB.
       // floatingActionButton: _isScrollingDown

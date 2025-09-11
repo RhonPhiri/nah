@@ -21,9 +21,9 @@ class HymnalRepositoryEmbedded implements HymnalRepository {
        _sharedPrefService = sharedPrefService;
 
   @override
-  Future<Result<String?>> getStoredHymnaLanguage() async {
-    final result = await _sharedPrefService.getStoredHymnalLanguage();
-    if (result is Error<String?>) {
+  Future<Result<Hymnal>> getStoredHymnal() async {
+    final result = await _sharedPrefService.getStoredHymnal();
+    if (result is Error<Hymnal>) {
       log(
         "Failure loading stored hymnal language from shared preferences",
         name: _name,
@@ -35,9 +35,9 @@ class HymnalRepositoryEmbedded implements HymnalRepository {
   }
 
   @override
-  Future<Result<void>> setHymnalLanguage(String language) async {
-    final result = await _sharedPrefService.setHymnalLanguage(language);
-    if (result is Error<String?>) {
+  Future<Result<void>> setHymnal(Hymnal hymnal) async {
+    final result = await _sharedPrefService.setHymnal(hymnal);
+    if (result is Error<Hymnal>) {
       log(
         "Failure loading stored hymnal language from shared preferences",
         name: _name,

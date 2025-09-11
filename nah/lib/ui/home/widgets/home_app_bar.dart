@@ -74,7 +74,7 @@ enum ActionButtons {
         // );
         print("Search button pressed");
       case ActionButtons.hymnal:
-        context.go(Routes.hymnals);
+        context.go(Routes.hymnalsPath);
     }
   }
 }

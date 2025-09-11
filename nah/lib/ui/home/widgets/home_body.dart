@@ -4,12 +4,7 @@ import 'package:nah/ui/home/view_models/home_view_model.dart';
 import 'package:nah/ui/home/widgets/home_app_bar.dart';
 
 class HomeBody extends StatelessWidget {
-  const HomeBody({
-    super.key,
-    required this.hymnalTitle,
-    required this.homeViewModel,
-  });
-  final String hymnalTitle;
+  const HomeBody({super.key, required this.homeViewModel});
   final HomeViewModel homeViewModel;
 
   @override
@@ -21,7 +16,7 @@ class HomeBody extends StatelessWidget {
         return CustomScrollView(
           // controller: _scrollController,
           slivers: [
-            HomeAppBar(title: hymnalTitle),
+            HomeAppBar(title: homeViewModel.hymnalTitle),
             SliverHymnList(hymns: homeViewModel.hymns),
           ],
         );
