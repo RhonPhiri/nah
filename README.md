@@ -1,2 +1,5 @@
-# nah
-This is a New Apostolic Church Hymnal App developed with dart/ flutter.
+# TODOS
+
+[ ] Implement the methods for the delegates and information parsers
+
+[ ] Implement clean architecture and SOT for the app shell
