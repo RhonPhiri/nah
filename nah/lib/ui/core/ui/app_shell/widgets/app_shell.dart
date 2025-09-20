@@ -39,29 +39,10 @@ class _AppShellState extends State<AppShell> {
               selectedIdx: widget.appState.selectedIdx,
               onDestinationSelected: widget.appState.updateSelectedIdx,
             ),
-          Expanded(
-            flex: layout.isExtraLarge ? 2 : 1,
-            child: Container(
-              color: Colors.amber,
-              child: Center(child: Text("Hymns")),
-            ),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Router(routerDelegate: _routerDelegate),
           ),
-          if (layout.isExpanded || layout.isLarge || layout.isExtraLarge)
-            Expanded(
-              flex: layout.isExtraLarge ? 3 : 1,
-              child: Container(
-                color: Colors.lightBlue,
-                child: Center(child: Text("Hymn Details")),
-              ),
-            ),
-          if (layout.isExtraLarge)
-            Expanded(
-              flex: layout.isExtraLarge ? 2 : 1,
-              child: Container(
-                color: Colors.green,
-                child: Center(child: Text("Hymnals")),
-              ),
-            ),
         ],
       ),
       // body: Router(routerDelegate: _routerDelegate),

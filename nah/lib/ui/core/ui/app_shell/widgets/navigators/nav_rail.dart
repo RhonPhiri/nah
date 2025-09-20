@@ -49,7 +49,7 @@ class NavRail extends StatelessWidget {
           .toList(),
       selectedIndex: selectedIdx,
       selectedLabelTextStyle: TextStyle(
-        fontWeight: FontWeight.w900,
+        fontWeight: isExtended ? FontWeight.bold : FontWeight.normal,
         color: Theme.of(context).colorScheme.onSurface,
       ),
       onDestinationSelected: onDestinationSelected,

@@ -1,7 +1,5 @@
 sealed class AppRoutePath {}
 
-class AppShellPath extends AppRoutePath {}
-
 class HymnScreenPath extends AppRoutePath {}
 
 class HymnCollectionScreenPath extends AppRoutePath {}
