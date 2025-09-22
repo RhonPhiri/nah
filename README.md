@@ -1,5 +1,5 @@
 # TODOS
 
-[ ] Implement the methods for the delegates and information parsers
+[x] Implement the methods for the delegates and information parsers
 
-[ ] Implement clean architecture and SOT for the app shell
+[-] Implement clean architecture and SOT for the app shell
