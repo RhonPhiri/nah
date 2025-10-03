@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:nah/routing/path/app_route_path.dart';
 import 'package:nah/ui/about/about_screen.dart';
+import 'package:nah/routing/path/app_route_path.dart';
 import 'package:nah/ui/core/ui/app_shell/view_model/app_state.dart';
 import 'package:nah/ui/core/ui/app_shell/widgets/fade_transition_page.dart';
-import 'package:nah/ui/hymn/hymn_screen.dart';
-import 'package:nah/ui/hymn_collections/hymn_collection_screen.dart';
+import 'package:nah/ui/hymn/widgets/hymn_screen.dart';
+import 'package:nah/ui/hymn_collection/widgets/hymn_collection_screen.dart';
+import 'package:nah/ui/hymn_collection/widgets/hymn_collection_screen.dart';
 
 /// [InnerRouterDelegate] is taken up by the [AppRouterDelegate]
 /// Using the selected tab index, determines the screen to be shown between [HymnScreen], [HymnCollectionScreen] or [AboutScreen]

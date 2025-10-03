@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nah/ui/core/ui/app_shell/view_model/app_layout.dart';
+import 'package:nah/utils/app_layout.dart';
 
 class HymnScreen extends StatelessWidget {
   const HymnScreen({super.key});
