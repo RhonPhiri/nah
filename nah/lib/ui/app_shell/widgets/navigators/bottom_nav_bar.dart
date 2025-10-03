@@ -16,7 +16,10 @@ class BottomNavBar extends StatelessWidget {
     return NavigationBar(
       destinations: NavItems.values
           .map<NavigationDestination>(
-            (item) => NavigationDestination(icon: item.icon, label: item.label),
+            (item) => NavigationDestination(
+              icon: item.icon(selectedIdx),
+              label: item.label,
+            ),
           )
           .toList(),
       indicatorShape: RoundedRectangleBorder(

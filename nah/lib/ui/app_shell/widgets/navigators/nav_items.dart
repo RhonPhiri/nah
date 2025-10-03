@@ -5,11 +5,16 @@ enum NavItems {
   collections,
   about;
 
-  Icon get icon {
+  Icon icon(int selectedIdx) {
+    final isSelected = index == selectedIdx;
     return switch (this) {
       hymns => Icon(Icons.queue_music_rounded),
-      collections => Icon(Icons.collections_bookmark_rounded),
-      about => Icon(Icons.info_rounded),
+      collections => Icon(
+        isSelected
+            ? Icons.collections_bookmark_rounded
+            : Icons.collections_bookmark_outlined,
+      ),
+      about => Icon(isSelected ? Icons.info_rounded : Icons.info_outline),
     };
   }
 

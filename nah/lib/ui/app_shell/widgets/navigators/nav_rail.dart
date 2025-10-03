@@ -42,7 +42,7 @@ class NavRail extends StatelessWidget {
           .map<NavigationRailDestination>(
             (item) => NavigationRailDestination(
               padding: EdgeInsets.only(top: isExtended ? 32 : 16),
-              icon: item.icon,
+              icon: item.icon(selectedIdx),
               label: Text(item.label),
             ),
           )
