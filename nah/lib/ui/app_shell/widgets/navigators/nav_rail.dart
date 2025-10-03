@@ -22,6 +22,7 @@ class NavRail extends StatelessWidget {
           SizedBox(height: 24),
           if (isExtended)
             FloatingActionButton.extended(
+              key: ValueKey("NAV_RAIL_EXTENDED_FAB"),
               extendedIconLabelSpacing: 16,
               icon: Icon(Icons.dialpad_rounded),
               onPressed: () {},
@@ -29,6 +30,7 @@ class NavRail extends StatelessWidget {
             )
           else
             FloatingActionButton(
+              key: ValueKey("NAV_RAIL_FAB"),
               onPressed: () {},
               child: Icon(Icons.dialpad_rounded),
             ),

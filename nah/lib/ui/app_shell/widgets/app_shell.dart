@@ -48,10 +48,11 @@ class _AppShellState extends State<AppShell> {
       // body: Router(routerDelegate: _routerDelegate),
       bottomNavigationBar: layout.isCompact
           ? BottomNavBar(
+              key: ValueKey("APP_SHELL_BOTTOM_NAVIGATION_BAR"),
               selectedIdx: widget.appState.selectedIdx,
               onDestinationSelected: widget.appState.updateSelectedIdx,
             )
-          : SizedBox.shrink(),
+          : SizedBox.shrink(key: ValueKey("APP_SHELL_BOTTOM_SIZED_BOX")),
     );
   }
 }

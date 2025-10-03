@@ -17,6 +17,7 @@ class BottomNavBar extends StatelessWidget {
       destinations: NavItems.values
           .map<NavigationDestination>(
             (item) => NavigationDestination(
+              key: ValueKey(item.label),
               icon: item.icon(selectedIdx),
               label: item.label,
             ),
