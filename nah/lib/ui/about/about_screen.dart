@@ -5,6 +5,18 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("About")));
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: ConstrainedBox(
+            constraints: constraints.tighten(width: 600),
+            child: Container(
+              color: Colors.green,
+              child: Center(child: Text("About")),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nah/config/dependencies.dart';
 import 'package:nah/routing/delegate/app_router_delegate.dart';
+import 'package:nah/routing/information_parser/app_route_information_parser.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MultiProvider(providers: providers, child: const MyApp()));
+  runApp(MultiProvider(providers: devProviders, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,8 +26,9 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.blue,
         ),
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       routerDelegate: AppRouterDelegate(context.read()),
+      routeInformationParser: AppRouteInformationParser(),
     );
   }
 }
