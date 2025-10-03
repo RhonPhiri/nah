@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nah/routing/delegate/inner_router_delegate.dart';
 import 'package:nah/utils/app_layout.dart';
-import 'package:nah/ui/core/ui/app_shell/view_model/app_state.dart';
-import 'package:nah/ui/core/ui/app_shell/widgets/navigators/bottom_nav_bar.dart';
-import 'package:nah/ui/core/ui/app_shell/widgets/navigators/nav_rail.dart';
+import 'package:nah/ui/app_shell/view_model/app_state.dart';
+import 'package:nah/ui/app_shell/widgets/navigators/bottom_nav_bar.dart';
+import 'package:nah/ui/app_shell/widgets/navigators/nav_rail.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.appState});

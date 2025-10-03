@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nah/ui/core/ui/app_shell/widgets/navigators/nav_items.dart';
+import 'package:nah/ui/app_shell/widgets/navigators/nav_items.dart';
 
 class NavRail extends StatelessWidget {
   const NavRail({

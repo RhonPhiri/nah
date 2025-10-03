@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nah/ui/about/about_screen.dart';
 import 'package:nah/routing/path/app_route_path.dart';
-import 'package:nah/ui/core/ui/app_shell/view_model/app_state.dart';
-import 'package:nah/ui/core/ui/app_shell/widgets/fade_transition_page.dart';
+import 'package:nah/ui/app_shell/view_model/app_state.dart';
+import 'package:nah/ui/app_shell/widgets/fade_transition_page.dart';
 import 'package:nah/ui/hymn/widgets/hymn_screen.dart';
 import 'package:nah/ui/hymn_collection/widgets/hymn_collection_screen.dart';
 import 'package:nah/ui/hymn_collection/widgets/hymn_collection_screen.dart';
