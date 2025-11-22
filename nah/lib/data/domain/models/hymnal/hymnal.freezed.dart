@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Hymnal {
 
- int get id; String get title; String get language;
+// each hymnal has an Id
+ int get id;// Title of the hymnal as it appears on the hymnal book
+ String get title;// Language of the songs in the hymnal
+ String get language;
 /// Create a copy of Hymnal
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -214,8 +217,11 @@ class _Hymnal implements Hymnal {
   const _Hymnal({required this.id, required this.title, required this.language});
   factory _Hymnal.fromJson(Map<String, dynamic> json) => _$HymnalFromJson(json);
 
+// each hymnal has an Id
 @override final  int id;
+// Title of the hymnal as it appears on the hymnal book
 @override final  String title;
+// Language of the songs in the hymnal
 @override final  String language;
 
 /// Create a copy of Hymnal
