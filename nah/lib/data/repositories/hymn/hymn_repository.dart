@@ -1,8 +1,8 @@
-import 'package:nah/data/domain/models/hymn/hymn.dart';
+import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/utils/result.dart';
 
-/// Implementation of managing the hymn data obtained from the hymn service
+/// Abstract implementation for managing the hymn data obtained from the data service
 abstract class HymnRepository {
-  /// Method to get hymns from the hymn service based on the language of the hymnal they are incorporated in
+  /// Method to get hymns based on the language of the hymnal they are associated with
   Future<Result<List<Hymn>>> getHymns(String hymnalLanguage);
 }
