@@ -5,9 +5,3 @@ const kHymnal = Hymnal(
   title: "HYMNAL TITLE",
   language: "HYMNAL LANGUAGE",
 );
-
-const kHymnalMap = {
-  "id": 1,
-  "title": "HYMNAL TITLE",
-  "language": "HYMNAL LANGUAGE",
-};
