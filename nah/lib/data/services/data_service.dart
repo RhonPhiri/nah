@@ -1,7 +1,6 @@
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
-import 'package:nah/utils/result.dart';
 
 /// [DataService] implements the basic methods and functions to provide data to the repos
 abstract interface class DataService {
