@@ -3,7 +3,7 @@ import 'package:nah/data/repositories/hymnal/hymnal_repository.dart';
 import 'package:nah/data/services/data_service.dart';
 import 'package:nah/utils/result.dart';
 
-class HymnalRepositoryDev extends HymnalRepository {
+class HymnalRepositoryDev implements HymnalRepository {
   final DataService _dataService;
 
   HymnalRepositoryDev({required DataService dataService})
