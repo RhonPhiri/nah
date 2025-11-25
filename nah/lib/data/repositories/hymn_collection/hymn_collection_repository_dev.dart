@@ -37,4 +37,13 @@ class HymnCollectionRepositoryDev implements HymnCollectionRepository {
       return Result.error(Exception(e));
     }
   }
+
+  @override
+  Future<Result<List<HymnCollection>>> getHymnCollections() async {
+    final result = await _dataService.getHymnCollections();
+    if (result is Success<List<HymnCollection>>) {
+      return Result.success(result.data);
+    }
+    return Result.error((result as Error<List<HymnCollection>>).error);
+  }
 }

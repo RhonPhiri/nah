@@ -11,11 +11,10 @@ class HymnalRepositoryDev implements HymnalRepository {
 
   @override
   Future<Result<List<Hymnal>>> getHymnals() async {
-    try {
-      final hymnals = await _dataService.getHymnals();
-      return Result.success(hymnals);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(Exception("$e, $stackTrace"));
+    final result = await _dataService.getHymnals();
+    if (result is Success<List<Hymnal>>) {
+      return Result.success(result.data);
     }
+    return Result.error((result as Error<List<Hymnal>>).error);
   }
 }

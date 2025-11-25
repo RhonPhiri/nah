@@ -12,4 +12,7 @@ abstract class HymnCollectionRepository {
 
   /// Method to edit an existing hymn collection in the database
   Future<Result<void>> editHymnCollection(HymnCollection hymnCol);
+
+  /// Method to get all hymn collections from the database
+  Future<Result<List<HymnCollection>>> getHymnCollections();
 }

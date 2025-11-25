@@ -11,11 +11,10 @@ class HymnRepositoryDev implements HymnRepository {
 
   @override
   Future<Result<List<Hymn>>> getHymns(String hymnalLanguage) async {
-    try {
-      final hymns = await _dataService.getHymns(hymnalLanguage);
-      return Result.success(hymns);
-    } on Exception catch (e, stackTrace) {
-      return Result.error(Exception("$e, $stackTrace"));
+    final result = await _dataService.getHymns(hymnalLanguage);
+    if (result is Success<List<Hymn>>) {
+      return Result.success(result.data);
     }
+    return Result.error((result as Error<List<Hymn>>).error);
   }
 }

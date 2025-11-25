@@ -3,8 +3,10 @@ import 'package:nah/config/dependencies.dart';
 import 'package:nah/data/repositories/hymn_collection/hymn_collection_repository.dart';
 import 'package:nah/data/repositories/hymn_collection/hymn_collection_repository_dev.dart';
 import 'package:nah/data/services/data_service.dart';
+import 'package:nah/utils/result.dart';
 import '../../../testing/fakes/data/service/fake_data_service.dart';
 import '../../../testing/fakes/domain/models/hymn_collection.dart';
+import '../../../testing/utils/result.dart';
 
 void main() {
   group('HymnCollectionRepository Tests', () {
@@ -61,6 +63,19 @@ void main() {
 
       final ds = getIt<DataService>() as FakeDataService;
       expect(ds.hymnCollections, isEmpty);
+    });
+
+    test('Should get hymnCollections', () async {
+      await hymnCollectionRepository.createHymnCollection(kHymnCollection);
+
+      final ds = getIt<DataService>() as FakeDataService;
+
+      expect(ds.hymnCollections.length, 1);
+
+      final result = await hymnCollectionRepository.getHymnCollections();
+
+      expect(result, isA<Success>());
+      expect(result.asSuccess.data.first.title, "TITLE");
     });
   });
 }
