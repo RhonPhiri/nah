@@ -22,5 +22,13 @@ void main() {
       expect(result.asSuccess.data.length, 1);
       expect(result.asSuccess.data.first.details["source"], "ENGLISH_HYMNAL");
     });
+
+    test('should get a specific hymns', () async {
+      final result = await hymnRepository.getHymns('en', hymnId: 1);
+
+      expect(result, isA<Success>());
+      expect(result.asSuccess.data.length, 1);
+      expect(result.asSuccess.data.first.details["source"], "ENGLISH_HYMNAL");
+    });
   });
 }

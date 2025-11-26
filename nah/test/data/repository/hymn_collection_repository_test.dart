@@ -10,7 +10,7 @@ import '../../../testing/utils/result.dart';
 
 void main() {
   group('HymnCollectionRepository Tests', () {
-    late HymnCollectionRepository hymnCollectionRepository;
+    late HymnCollectionRepository collectionRepository;
     setUpAll(() {
       configureDevDependencies();
     });
@@ -22,7 +22,7 @@ void main() {
       getIt.registerSingleton<DataService>(FakeDataService());
 
       // Instantiate repository after registering the fake service so it uses the fake
-      hymnCollectionRepository = HymnCollectionRepositoryDev(
+      collectionRepository = HymnCollectionRepositoryDev(
         dataService: getIt<DataService>(),
       );
     });
@@ -32,7 +32,7 @@ void main() {
       getIt.popScope();
     });
     test('Should create a hymnCollection', () async {
-      await hymnCollectionRepository.createHymnCollection(kHymnCollection);
+      await collectionRepository.createHymnCollection(kHymnCollection);
 
       final ds = getIt<DataService>() as FakeDataService;
       expect(ds.hymnCollections.length, 1);
@@ -41,14 +41,14 @@ void main() {
 
     test('Should edit an existing hymnCollection using copyWith', () async {
       // insert initial
-      await hymnCollectionRepository.createHymnCollection(kHymnCollection);
+      await collectionRepository.createHymnCollection(kHymnCollection);
 
       final updated = kHymnCollection.copyWith(
         title: 'NEW_TITLE',
         description: 'NEW_DESCRIPTION',
       );
 
-      await hymnCollectionRepository.editHymnCollection(updated);
+      await collectionRepository.editHymnCollection(updated);
 
       final ds = getIt<DataService>() as FakeDataService;
       expect(ds.hymnCollections.length, 1);
@@ -57,22 +57,22 @@ void main() {
     });
 
     test('Should delete an existing hymnCollection', () async {
-      await hymnCollectionRepository.createHymnCollection(kHymnCollection);
+      await collectionRepository.createHymnCollection(kHymnCollection);
 
-      await hymnCollectionRepository.deleteHymnCollection(kHymnCollection);
+      await collectionRepository.deleteHymnCollection(kHymnCollection);
 
       final ds = getIt<DataService>() as FakeDataService;
       expect(ds.hymnCollections, isEmpty);
     });
 
     test('Should get hymnCollections', () async {
-      await hymnCollectionRepository.createHymnCollection(kHymnCollection);
+      await collectionRepository.createHymnCollection(kHymnCollection);
 
       final ds = getIt<DataService>() as FakeDataService;
 
       expect(ds.hymnCollections.length, 1);
 
-      final result = await hymnCollectionRepository.getHymnCollections();
+      final result = await collectionRepository.getHymnCollections();
 
       expect(result, isA<Success>());
       expect(result.asSuccess.data.first.title, "TITLE");

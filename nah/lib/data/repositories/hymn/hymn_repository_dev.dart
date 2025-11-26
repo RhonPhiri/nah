@@ -10,8 +10,11 @@ class HymnRepositoryDev implements HymnRepository {
     : _dataService = dataService;
 
   @override
-  Future<Result<List<Hymn>>> getHymns(String hymnalLanguage) async {
-    final result = await _dataService.getHymns(hymnalLanguage);
+  Future<Result<List<Hymn>>> getHymns(
+    String hymnalLanguage, {
+    int? hymnId,
+  }) async {
+    final result = await _dataService.getHymns(hymnalLanguage, hymnId: hymnId);
     if (result is Success<List<Hymn>>) {
       return Result.success(result.data);
     }

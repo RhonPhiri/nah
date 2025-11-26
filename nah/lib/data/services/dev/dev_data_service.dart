@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:nah/config/assets.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
+import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:nah/data/services/data_service.dart';
@@ -13,6 +14,8 @@ import 'package:nah/utils/result.dart';
 class DevDataService implements DataService {
   List<HymnCollection> hymnCollections = [];
 
+  List<HymnBookmark> hymnBookmarks = [];
+
   /// Method to load the embedded assets
   ///
   Future<List<Map<String, dynamic>>> _loadEmbeddedAsset(String asset) async {
@@ -21,11 +24,19 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<List<Hymn>>> getHymns(String hymnalLanguage) async {
-    final hymns = await _loadEmbeddedAsset(
+  Future<Result<List<Hymn>>> getHymns(
+    String hymnalLanguage, {
+    int? hymnId,
+  }) async {
+    final hymnMaps = await _loadEmbeddedAsset(
       "${Assets.hymns}$hymnalLanguage.json",
     );
-    return Result.success(hymns.map<Hymn>(Hymn.fromJson).toList());
+    final hymns = hymnMaps.map<Hymn>(Hymn.fromJson).toList();
+
+    if (hymnId == null) {
+      return Result.success([hymns.firstWhere((hymn) => hymn.id == hymnId)]);
+    }
+    return Result.success(hymns);
   }
 
   @override
@@ -35,9 +46,9 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<void>> deleteHymnCollection(HymnCollection hymnCol) async {
-    hymnCollections.removeWhere((hc) => hc.id == hymnCol.id);
-    return Result.success(null);
+  Future<Result<bool>> deleteHymnCollection(HymnCollection hymnCol) async {
+    final removed = hymnCollections.remove(hymnCol);
+    return Result.success(removed);
   }
 
   @override
@@ -55,12 +66,35 @@ class DevDataService implements DataService {
   }
 
   @override
-  void close() {
-    hymnCollections.clear();
+  Future<Result<List<HymnCollection>>> getHymnCollections() async {
+    return Result.success(hymnCollections);
   }
 
   @override
-  Future<Result<List<HymnCollection>>> getHymnCollections() async {
-    return Result.success(hymnCollections);
+  Future<Result<List<HymnBookmark>>> getHymnBookmarks(
+    int hymnCollectionId,
+  ) async {
+    return Result.success(
+      hymnBookmarks
+          .where((hymnBm) => hymnBm.hymnCollectionId == hymnCollectionId)
+          .toList(),
+    );
+  }
+
+  @override
+  Future<Result<void>> insertHymnBookmark(HymnBookmark bookmark) async {
+    hymnBookmarks.add(bookmark);
+    return Result.success(null);
+  }
+
+  @override
+  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) async {
+    final removed = hymnBookmarks.remove(bookmark);
+    return Result.success(removed);
+  }
+
+  @override
+  void close() {
+    hymnCollections.clear();
   }
 }

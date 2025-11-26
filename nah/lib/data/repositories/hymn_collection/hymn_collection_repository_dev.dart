@@ -10,32 +10,29 @@ class HymnCollectionRepositoryDev implements HymnCollectionRepository {
     : _dataService = dataService;
   @override
   Future<Result<void>> createHymnCollection(HymnCollection hymnCol) async {
-    try {
-      await _dataService.insertHymnCollection(hymnCol);
+    final result = await _dataService.insertHymnCollection(hymnCol);
+    if (result is Success<void>) {
       return Result.success(null);
-    } on Exception catch (e) {
-      return Result.error(Exception(e));
     }
+    return Result.error((result as Error<void>).error);
   }
 
   @override
   Future<Result<void>> deleteHymnCollection(HymnCollection hymnCol) async {
-    try {
-      await _dataService.deleteHymnCollection(hymnCol);
+    final result = await _dataService.deleteHymnCollection(hymnCol);
+    if (result is Success<void>) {
       return Result.success(null);
-    } on Exception catch (e) {
-      return Result.error(Exception(e));
     }
+    return Result.error((result as Error<void>).error);
   }
 
   @override
   Future<Result<void>> editHymnCollection(HymnCollection hymnCol) async {
-    try {
-      await _dataService.editHymnCollection(hymnCol);
+    final result = await _dataService.editHymnCollection(hymnCol);
+    if (result is Success<void>) {
       return Result.success(null);
-    } on Exception catch (e) {
-      return Result.error(Exception(e));
     }
+    return Result.error((result as Error<void>).error);
   }
 
   @override

@@ -11,6 +11,7 @@ _HymnBookmark _$HymnBookmarkFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       title: json['title'] as String,
       hymnCollectionId: (json['hymnCollectionId'] as num).toInt(),
+      hymnLanguage: json['hymnLanguage'] as String,
     );
 
 Map<String, dynamic> _$HymnBookmarkToJson(_HymnBookmark instance) =>
@@ -18,4 +19,5 @@ Map<String, dynamic> _$HymnBookmarkToJson(_HymnBookmark instance) =>
       'id': instance.id,
       'title': instance.title,
       'hymnCollectionId': instance.hymnCollectionId,
+      'hymnLanguage': instance.hymnLanguage,
     };
