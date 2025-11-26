@@ -1,0 +1,85 @@
+[
+    {
+        "id": 1,
+        "title": "Dzukani Ana a Mfumu",
+        "details": {
+            "englishHymnal": "522NEH",
+            "englishTitle": "Awake! Sons of the Kingdom"
+        },
+        "lyrics": {
+            "verses": [
+                "1. Dzukani ana ache, Mfumu yayandika\nTamandani mchimwemwe Mfumu yam'mwambayo\nBwerani muone chikhomo tayandika\nTidikiranu Mbuye, mchiyembekezero.",
+                "2. Penyanitu olira, Mfumu yayandika\nChotsani zisonizo, thandizo lafika\nMumalo oyera, chitonthozo chirimo\nChipulumutso chathu, mchisomo tipeza.",
+                "3. Dzukani othodwanu, Mfumu yili mfupi\nKondwani ozunzika, kuwala kwafika\nMbuye ali ndi'fe, ngakhale mudzipsinjo\nMchitonthozo adalitsa, imfa 'dzagonjetsa"
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 2,
+        "title": "Ku Zioni sangalala",
+        "details": {
+            "englishHymnal": "02NAH",
+            "englishTitle": "Rise zion raise your voice"
+        },
+        "lyrics": {
+            "verses": [
+                "1. Ku zion sangalala, ndi ntchito za Mulunguyo\nZomwe zionekera'we, m'thambo lofana ndi mdima\nM'choka kuunika kwa myaya, udzapenya mwatsopano\nKuunika, choonadi, moyo apatsa\nMwa ntumiki wa kumwamba.",
+                "2. Ambuyeyo wapatsidwa, mphamvu za dziko ndł“‘mwamba\nKulamula, kotsogoza, Angelo amuyimbira\nM'dierekezi saloledwa, kuzunza ndi kuopsya'we\nMtenderewo, madalitso, kuyamika kumvekadi\nMokondwa mlandire iye.",
+                "3. Chisomo chiperekedwa, mnjira yopapatizayi\nYonka ku chiombolo, mwa Yesu muli ntendere\nMachimo amachotsedwa, kondwani mum'yamike\nDzani nonse odwalanu, pemphani, muchiritsidwa\nNdikudya nkate wa moyo."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 3,
+        "title": "Uka konzekeratu",
+        "details": {
+            "englishHymnal": "03NAH",
+            "englishTitle": "Rise prepare yourself alright"
+        },
+        "lyrics": {
+            "verses": [
+                "1. Uka konzekeratu, landira mfumu mokondwa\nKhomo tsegula alowe, amapereka chifundo\nUkonze njira yako, m'mene adza kwa iwe.",
+                "2. Anamenyadi nkhondo, nasambuka kamba ka ife\nKupyolera mu imfa, chisomo, bata zinadza,\nKwa tate anapita, tapeza chiombolo.",
+                "3. Wolemekezekayo mlandire ndi mtimawo\nAdzachezera iwe m'patse mtima wakowo\nMtima ndi maganizo, zipereke kwa iye.",
+                "4. Usamlore apite, mu chikondi m'fungatire\nMzonse khala mwa iye, usasocheretse moyo\nMwa iye udzadala lero ndi m'yaya wonse."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 4,
+        "title": "Bvalani za nkhondo zanu",
+        "details": {
+            "englishHymnal": "410NEH",
+            "englishTitle": "Gird on your Armour"
+        },
+        "lyrics": {
+            "verses": [
+                "1. Bvalani za nkhondo zanu, dzadzani nyalizo\nNdi mafuta a chikondi, mugonje kwa iye\nMkwati adzabwera kudzatenga ache\nKonzekani sadzachedwa, mvani kuitana.",
+                "2. Ndidzakonzekera bwanji kukumana naye\nKuunika kwa Mzimuyo, kudzaze mu mtima\nKudzaze mumtima, kachisi wache akhale woyera\nNdipemphera osaopa, mpaka kudza kwache.",
+                "3. Turukani panthawiyi kuitana ena\nAdzaguletu mafuta akhale ndi Khristu\nOmwe adikira, kunja ndi ambiri\nMalo ambiri alipo alowetsenitu.",
+                "4. Ndikukondwa kwakukulu, povala minjiro\nMu dziko la kumwambako\nTidzaona Mfumu, imba Aleluya\nAmbuye, tiimba pamodzi."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 5,
+        "title": "Mkwati adzakumbukirani",
+        "details": {
+            "englishHymnal": "425NEH",
+            "englishTitle": "The Bridegroom comes! Remember His word!"
+        },
+        "lyrics": {
+            "verses": [
+                "1. Mkwati adzakumbukirani woomboledwa dikirani\nMunthawi zonse monga mwamva Mbuye adzansanga",
+                "2. Mkwati adza inu osamva perekani mtima kwa Yesu\nNdipo muchoke muza mdziko Mbuye adza msanga.",
+                "3. Mkwati akudza kodi mwamva, tukulani maso mmwambamo\nYandikiranitu kwa iye Mbuye adzansanga.",
+                "4. Mkwati akudza monga bwenzi kwa iye okhulupilika\nNadzakhala m'ulemelero Mbuye adzansanga."
+            ],
+            "chorus": "Chorus :Mokondwera mumapemphero tidikira kudzatengedwa\nTidzaona ulemelero pokumana nanu."
+        }
+    }
+]
