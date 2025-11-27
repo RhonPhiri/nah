@@ -24,12 +24,16 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<List<Hymn>>> getHymns(
-    String hymnalLanguage, {
-    int? hymnId,
-  }) async {
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) async {
+    /// The implemtation below is supposed to be placed in a use case
+    ///
+    final result = await getHymnals();
+
+    final hymnals = (result as Success<List<Hymnal>>).data;
+
+    final hymnal = hymnals.firstWhere((hymnal) => hymnal.id == hymnalId);
     final hymnMaps = await _loadEmbeddedAsset(
-      "${Assets.hymns}$hymnalLanguage.json",
+      "${Assets.hymns}${hymnal.language}.json",
     );
     final hymns = hymnMaps.map<Hymn>(Hymn.fromJson).toList();
 
@@ -94,7 +98,7 @@ class DevDataService implements DataService {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     hymnCollections.clear();
   }
 }

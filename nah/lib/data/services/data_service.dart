@@ -7,7 +7,7 @@ import 'package:nah/utils/result.dart';
 /// [DataService] implements the basic methods and functions to provide data to the repos
 abstract interface class DataService {
   /// Method to get hymns from the respective data service provider
-  Future<Result<List<Hymn>>> getHymns(String hymnalLanguage, {int? hymnId});
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId});
 
   /// Method to get hymnals from the respective data service provider
   Future<Result<List<Hymnal>>> getHymnals();
@@ -34,5 +34,5 @@ abstract interface class DataService {
   Future<Result<List<HymnBookmark>>> getHymnBookmarks(int hymnCollectionId);
 
   /// Method to dispose resources
-  void close();
+  Future<void> close();
 }

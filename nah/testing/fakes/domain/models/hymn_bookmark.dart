@@ -4,5 +4,5 @@ const kHymnBookmark = HymnBookmark(
   id: 1,
   title: "HYMN_BOOKMARK",
   hymnCollectionId: 1,
-  hymnLanguage: "LANGUAGE",
+  hymnalId: 1,
 );

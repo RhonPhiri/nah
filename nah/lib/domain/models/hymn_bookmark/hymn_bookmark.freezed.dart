@@ -19,7 +19,7 @@ mixin _$HymnBookmark {
  int get id;// Title of the hymn that has been bookmarked.
  String get title;// Identifier of the collection to which the hymn has been bookmarked.
  int get hymnCollectionId;// Identifier of the hymnal to which the hymn belongs to
- String get hymnLanguage;
+ int get hymnalId;
 /// Create a copy of HymnBookmark
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -32,16 +32,16 @@ $HymnBookmarkCopyWith<HymnBookmark> get copyWith => _$HymnBookmarkCopyWithImpl<H
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HymnBookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.hymnCollectionId, hymnCollectionId) || other.hymnCollectionId == hymnCollectionId)&&(identical(other.hymnLanguage, hymnLanguage) || other.hymnLanguage == hymnLanguage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HymnBookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.hymnCollectionId, hymnCollectionId) || other.hymnCollectionId == hymnCollectionId)&&(identical(other.hymnalId, hymnalId) || other.hymnalId == hymnalId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,hymnCollectionId,hymnLanguage);
+int get hashCode => Object.hash(runtimeType,id,title,hymnCollectionId,hymnalId);
 
 @override
 String toString() {
-  return 'HymnBookmark(id: $id, title: $title, hymnCollectionId: $hymnCollectionId, hymnLanguage: $hymnLanguage)';
+  return 'HymnBookmark(id: $id, title: $title, hymnCollectionId: $hymnCollectionId, hymnalId: $hymnalId)';
 }
 
 
@@ -52,7 +52,7 @@ abstract mixin class $HymnBookmarkCopyWith<$Res>  {
   factory $HymnBookmarkCopyWith(HymnBookmark value, $Res Function(HymnBookmark) _then) = _$HymnBookmarkCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, int hymnCollectionId, String hymnLanguage
+ int id, String title, int hymnCollectionId, int hymnalId
 });
 
 
@@ -69,13 +69,13 @@ class _$HymnBookmarkCopyWithImpl<$Res>
 
 /// Create a copy of HymnBookmark
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? hymnCollectionId = null,Object? hymnLanguage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? hymnCollectionId = null,Object? hymnalId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,hymnCollectionId: null == hymnCollectionId ? _self.hymnCollectionId : hymnCollectionId // ignore: cast_nullable_to_non_nullable
-as int,hymnLanguage: null == hymnLanguage ? _self.hymnLanguage : hymnLanguage // ignore: cast_nullable_to_non_nullable
-as String,
+as int,hymnalId: null == hymnalId ? _self.hymnalId : hymnalId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -160,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  int hymnCollectionId,  String hymnLanguage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  int hymnCollectionId,  int hymnalId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HymnBookmark() when $default != null:
-return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);case _:
+return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnalId);case _:
   return orElse();
 
 }
@@ -181,10 +181,10 @@ return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  int hymnCollectionId,  String hymnLanguage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  int hymnCollectionId,  int hymnalId)  $default,) {final _that = this;
 switch (_that) {
 case _HymnBookmark():
-return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);case _:
+return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnalId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +201,10 @@ return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  int hymnCollectionId,  String hymnLanguage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  int hymnCollectionId,  int hymnalId)?  $default,) {final _that = this;
 switch (_that) {
 case _HymnBookmark() when $default != null:
-return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);case _:
+return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnalId);case _:
   return null;
 
 }
@@ -216,7 +216,7 @@ return $default(_that.id,_that.title,_that.hymnCollectionId,_that.hymnLanguage);
 @JsonSerializable()
 
 class _HymnBookmark implements HymnBookmark {
-  const _HymnBookmark({required this.id, required this.title, required this.hymnCollectionId, required this.hymnLanguage});
+  const _HymnBookmark({required this.id, required this.title, required this.hymnCollectionId, required this.hymnalId});
   factory _HymnBookmark.fromJson(Map<String, dynamic> json) => _$HymnBookmarkFromJson(json);
 
 // Unique identifier that is equal to the hymn id.
@@ -226,7 +226,7 @@ class _HymnBookmark implements HymnBookmark {
 // Identifier of the collection to which the hymn has been bookmarked.
 @override final  int hymnCollectionId;
 // Identifier of the hymnal to which the hymn belongs to
-@override final  String hymnLanguage;
+@override final  int hymnalId;
 
 /// Create a copy of HymnBookmark
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HymnBookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.hymnCollectionId, hymnCollectionId) || other.hymnCollectionId == hymnCollectionId)&&(identical(other.hymnLanguage, hymnLanguage) || other.hymnLanguage == hymnLanguage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HymnBookmark&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.hymnCollectionId, hymnCollectionId) || other.hymnCollectionId == hymnCollectionId)&&(identical(other.hymnalId, hymnalId) || other.hymnalId == hymnalId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,hymnCollectionId,hymnLanguage);
+int get hashCode => Object.hash(runtimeType,id,title,hymnCollectionId,hymnalId);
 
 @override
 String toString() {
-  return 'HymnBookmark(id: $id, title: $title, hymnCollectionId: $hymnCollectionId, hymnLanguage: $hymnLanguage)';
+  return 'HymnBookmark(id: $id, title: $title, hymnCollectionId: $hymnCollectionId, hymnalId: $hymnalId)';
 }
 
 
@@ -261,7 +261,7 @@ abstract mixin class _$HymnBookmarkCopyWith<$Res> implements $HymnBookmarkCopyWi
   factory _$HymnBookmarkCopyWith(_HymnBookmark value, $Res Function(_HymnBookmark) _then) = __$HymnBookmarkCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, int hymnCollectionId, String hymnLanguage
+ int id, String title, int hymnCollectionId, int hymnalId
 });
 
 
@@ -278,13 +278,13 @@ class __$HymnBookmarkCopyWithImpl<$Res>
 
 /// Create a copy of HymnBookmark
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? hymnCollectionId = null,Object? hymnLanguage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? hymnCollectionId = null,Object? hymnalId = null,}) {
   return _then(_HymnBookmark(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,hymnCollectionId: null == hymnCollectionId ? _self.hymnCollectionId : hymnCollectionId // ignore: cast_nullable_to_non_nullable
-as int,hymnLanguage: null == hymnLanguage ? _self.hymnLanguage : hymnLanguage // ignore: cast_nullable_to_non_nullable
-as String,
+as int,hymnalId: null == hymnalId ? _self.hymnalId : hymnalId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

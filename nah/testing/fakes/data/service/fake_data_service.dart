@@ -18,10 +18,7 @@ class FakeDataService implements DataService {
   ///
   /// Method to get a sample hymn
   @override
-  Future<Result<List<Hymn>>> getHymns(
-    String hymnalLanguage, {
-    int? hymnId,
-  }) async {
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) async {
     if (hymnId != null) {
       return SynchronousFuture(
         Result.success([
@@ -82,7 +79,7 @@ class FakeDataService implements DataService {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     hymnCollections.clear();
   }
 }
