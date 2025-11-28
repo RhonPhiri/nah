@@ -66,17 +66,16 @@ class NahDbService implements DataService {
   /// Method to populate the database upon creation
   FutureOr<void> _onCreate(Database db, int version) async {
     /// Create hymnal table
-    await db.execute('''
-      CREATE TABLE $tableHymnal (
-	      hymnal_id INTEGER PRIMARY KEY,
-	      hymnal_title TEXT NOT NULL,
-	      hymnal_language TEXT NOT NULL
-      );
+    db.execute('''
+      CREATE TABLE hymnal (
+        hymnal_id INTEGER PRIMARY KEY,
+        hymnal_title TEXT NOT NULL,
+        hymnal_language TEXT NOT NULL
+     );
     ''');
 
-    /// Create hymn table
-    await db.execute('''
-      CREATE TABLE $tableHymn (
+    db.execute('''
+      CREATE TABLE hymn (
         hymn_id INTEGER,
         hymn_title TEXT NOT NULL,
         hymn_details TEXT,
@@ -86,34 +85,32 @@ class NahDbService implements DataService {
         FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
-      );
+        );
     ''');
 
-    /// Create hymn_collection table
-    await db.execute('''
+    db.execute('''
       CREATE TABLE hymn_collection (
-	      hymn_collection_id INTEGER PRIMARY KEY,
-	      hymn_collection_title TEXT NOT NULL UNIQUE,
-      	hymn_collection_description TEXT
+        hymn_collection_id INTEGER PRIMARY KEY,
+        hymn_collection_title TEXT NOT NULL UNIQUE,
+        hymn_collection_description TEXT
       );
     ''');
 
-    /// Create hymn_bookmark table
-    await db.execute('''
+    db.execute('''
       CREATE TABLE hymn_bookmark (
-	      hymn_bookmark_id INTEGER PRIMARY KEY,
+	      hymn_bookmark_id INTEGER NOT NULL,
 	      hymn_bookmark_title TEXT NOT NULL,
 	      hymn_collection_id INTEGER NOT NULL,
 	      hymnal_id INTEGER NOT NULL,
+        PRIMARY KEY (hymn_bookmark_id, hymn_collection_id)
 	      FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
 	        ON UPDATE CASCADE
 	        ON DELETE CASCADE,
-	      FOREIGN KEY (hymnal_id) REFERENCES $tableHymnal (hymnal_id)
-         ON UPDATE CASCADE
-         ON DELETE CASCADE
+        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
       );
     ''');
-
     await _insertData(db);
 
     await db.execute(

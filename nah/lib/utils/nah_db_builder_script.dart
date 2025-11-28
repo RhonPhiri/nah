@@ -47,9 +47,9 @@ void main(List<String> args) {
     // create schema (
     db.execute('''
       CREATE TABLE hymnal (
-       hymnal_id INTEGER PRIMARY KEY,
-       hymnal_title TEXT NOT NULL,
-       hymnal_language TEXT NOT NULL
+        hymnal_id INTEGER PRIMARY KEY,
+        hymnal_title TEXT NOT NULL,
+        hymnal_language TEXT NOT NULL
      );
     ''');
 
@@ -64,31 +64,32 @@ void main(List<String> args) {
         FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
+        );
+    ''');
+
+    db.execute('''
+      CREATE TABLE hymn_collection (
+        hymn_collection_id INTEGER PRIMARY KEY,
+        hymn_collection_title TEXT NOT NULL UNIQUE,
+        hymn_collection_description TEXT
       );
-  ''');
+    ''');
 
     db.execute('''
-  CREATE TABLE hymn_collection (
-    hymn_collection_id INTEGER PRIMARY KEY,
-    hymn_collection_title TEXT NOT NULL UNIQUE,
-    hymn_collection_description TEXT
-  );
-  ''');
-
-    db.execute('''
-  CREATE TABLE hymn_bookmark (
-    hymn_bookmark_id INTEGER PRIMARY KEY,
-    hymn_bookmark_title TEXT NOT NULL,
-    hymn_collection_id INTEGER NOT NULL,
-    hymnal_id INTEGER NOT NULL,
-    FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE,
-    FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
-  );
-  ''');
+      CREATE TABLE hymn_bookmark (
+	      hymn_bookmark_id INTEGER NOT NULL,
+	      hymn_bookmark_title TEXT NOT NULL,
+	      hymn_collection_id INTEGER NOT NULL,
+	      hymnal_id INTEGER NOT NULL,
+        PRIMARY KEY (hymn_bookmark_id, hymn_collection_id)
+	      FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
+	        ON UPDATE CASCADE
+	        ON DELETE CASCADE,
+        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
+      );
+    ''');
 
     // load hymnals. Used the File().readAsStringSync() method because it is going to run outside the flutter engine; Dart CLI
     // Rootbundle.loadString(asset) is only available in flutter, for runtime flutter apps

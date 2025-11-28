@@ -68,7 +68,7 @@ Future<void> main() async {
             ON UPDATE CASCADE
             ON DELETE CASCADE
         );
-     ''');
+      ''');
 
     final batch = database.batch();
     for (var i = 1; i <= hymnalLength; i++) {
