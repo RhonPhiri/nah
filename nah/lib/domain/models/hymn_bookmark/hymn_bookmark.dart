@@ -15,9 +15,8 @@ abstract class HymnBookmark with _$HymnBookmark {
     required String title,
     // Identifier of the collection to which the hymn has been bookmarked.
     required int hymnCollectionId,
-
     // Identifier of the hymnal to which the hymn belongs to
-    required String hymnLanguage,
+    required int hymnalId,
   }) = _HymnBookmark;
 
   factory HymnBookmark.fromJson(Map<String, Object?> json) =>

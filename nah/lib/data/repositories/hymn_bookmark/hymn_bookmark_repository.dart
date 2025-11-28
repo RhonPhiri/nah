@@ -8,7 +8,7 @@ abstract class HymnBookmarkRepository {
   Future<Result<void>> createHymnBookmark(HymnBookmark bookmark);
 
   /// Method to delete a hymnBookmark from the database
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark);
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark);
 
   /// Method to get hymnBookmarks associated with a particular collection
   Future<Result<List<HymnBookmark>>> getHymnBookmarks(int hymnCollectionId);

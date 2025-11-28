@@ -16,7 +16,7 @@ void main() {
     });
 
     test('should get hymns', () async {
-      final result = await hymnRepository.getHymns('en');
+      final result = await hymnRepository.getHymns(1);
 
       expect(result, isA<Success>());
       expect(result.asSuccess.data.length, 1);
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('should get a specific hymns', () async {
-      final result = await hymnRepository.getHymns('en', hymnId: 1);
+      final result = await hymnRepository.getHymns(1, hymnId: 1);
 
       expect(result, isA<Success>());
       expect(result.asSuccess.data.length, 1);

@@ -24,12 +24,16 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<List<Hymn>>> getHymns(
-    String hymnalLanguage, {
-    int? hymnId,
-  }) async {
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) async {
+    /// The implemtation below is supposed to be placed in a use case
+    ///
+    final result = await getHymnals();
+
+    final hymnals = (result as Success<List<Hymnal>>).data;
+
+    final hymnal = hymnals.firstWhere((hymnal) => hymnal.id == hymnalId);
     final hymnMaps = await _loadEmbeddedAsset(
-      "${Assets.hymns}$hymnalLanguage.json",
+      "${Assets.hymns}${hymnal.language}.json",
     );
     final hymns = hymnMaps.map<Hymn>(Hymn.fromJson).toList();
 
@@ -46,23 +50,23 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<bool>> deleteHymnCollection(HymnCollection hymnCol) async {
-    final removed = hymnCollections.remove(hymnCol);
-    return Result.success(removed);
+  Future<Result<int>> deleteHymnCollection(HymnCollection hymnCol) async {
+    hymnCollections.remove(hymnCol);
+    return Result.success(1);
   }
 
   @override
-  Future<Result<void>> editHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> editHymnCollection(HymnCollection hymnCol) async {
     final idx = hymnCollections.indexWhere((hc) => hc.id == hymnCol.id);
     hymnCollections[idx] = hymnCol;
 
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
-  Future<Result<void>> insertHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> insertHymnCollection(HymnCollection hymnCol) async {
     hymnCollections.add(hymnCol);
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
@@ -82,19 +86,19 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<void>> insertHymnBookmark(HymnBookmark bookmark) async {
+  Future<Result<int>> insertHymnBookmark(HymnBookmark bookmark) async {
     hymnBookmarks.add(bookmark);
-    return Result.success(null);
+    return Result.success(bookmark.id);
   }
 
   @override
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) async {
-    final removed = hymnBookmarks.remove(bookmark);
-    return Result.success(removed);
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark) async {
+    hymnBookmarks.remove(bookmark);
+    return Result.success(1);
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     hymnCollections.clear();
   }
 }

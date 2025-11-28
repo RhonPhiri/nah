@@ -1,0 +1,83 @@
+[
+    {
+        "id": 1,
+        "title": "Wanthengwa wakulindizga",
+        "details": {
+            "englishHymnal": "424NEH",
+            "englishTitle": "The Bride has Waited",
+            "composer": null
+        },
+        "lyrics": {
+            "verses": [
+                "1. Wanthengwa wakulindizga Fumu mukwiza kwinu \nMwana wachiuta zani mufiske khumbo linu \nKwiza kwinu ntchitumbiko palije kuluska ichi \nZani lubiro Fumu fiskani nyengo yinu.",
+                "2. Muli nase nyengo yose tikumuchindikani \nM'mazgu ghinu Fumu mtipe chivwano na nkhongono \nKuti timlindizganinge nakuwona chisko chinu \nZanu lubiro Fumu fiskani nyengo yinu,",
+                "3. Tibe maso nyengo yose nyali zithu zibale \nMutipeso na mafuta tiyime kulindizga \nTinozgekerenge ntchemo wanthengwa sono wafika \nZani lubiro Fumu fiskani nyengo yinu.",
+                "4. Manwekero ghithu ghose tikabepo pa nthengwa \nFumu Yesu labiskani tikumulindizgani \nM'chimwemwe tikulabiska kwa imwe na ku m'chemani \nZani lubiro Fumu fiskani nyengo yinu."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 2,
+        "title": "Mitima yithu",
+        "details": {
+            "englishHymnal": "33HC",
+            "englishTitle": "Our hearts sing with joy",
+            "composer": null
+        },
+        "lyrics": {
+            "verses": [
+                "1. Mitima yithu yiwonge Fumu yatitumbika tiyiwonge \nYiri na ise pavinthu vyose lusungu Iwake mwelulipo.",
+                "2. Muchindikike Chiuta withu tikuwonga uwemi winu \nMuthaski mtuba nkhongono zinu zikubusa kwa myira-yira."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 3,
+        "title": "M'nditore Fumu ndibe winu",
+        "details": {
+            "englishHymnal": "37HC",
+            "englishTitle": "Take my heart Lord",
+            "composer": null
+        },
+        "lyrics": {
+            "verses": [
+                "1. M'nditore Fumu ndibe winu, nkhumulombani, \nMundisuke Ku uheni nkhum'gomezgani. \nNdimwe Chiuta wane na Mphanji. \nKhumbo linu libusenge. \nKhumbo linu libusenge."
+            ],
+            "chorus": ""
+        }
+    },
+    {
+        "id": 4,
+        "title": "Tikwimba nachimwemwe",
+        "details": {
+            "englishHymnal": "47HC",
+            "englishTitle": "We raise a joyful chorus",
+            "composer": null
+        },
+        "lyrics": {
+            "verses": [
+                "1. Tikwimba nachimwemwe sumu yakubonga \nTikwimba na kuonga vitumbiko vyake.",
+                "2. Mwimbire Khristu mthaski m'ndopa watithaska \nMwimbire Khristu Mthaski kwamuyirayira."
+            ],
+            "chorus": "Chorus: Marumbo kwa muthaski watipa kutemwa \nKuti m'nkhongono zake tikwere kuchanya \nKuti m'nkhongono zake tikwere Kuchanya"
+        }
+    },
+    {
+        "id": 5,
+        "title": "Dada mukandisola",
+        "details": {
+            "englishHymnal": "73HC",
+            "englishTitle": "Tis Thee who chose me Father",
+            "composer": null
+        },
+        "lyrics": {
+            "verses": [
+                "1. Dada mukandisola ndibe mwana winu \nKuti nditebetenge apo kuli nyengo \nMu'chizi mwandisora kuti ndibe winu \nM'nkhongono ya mzimu ndimanyenge khumbo linu.",
+                "2. Nanga ndibe muheni mu'chizi nkhutowa \nMukutemwa kutuba mukundilongozga \nPakurwa na uheni imwe muli nane m'chivwano \nNdilondezge nkhafike kuchanya."
+            ],
+            "chorus": ""
+        }
+    }
+]

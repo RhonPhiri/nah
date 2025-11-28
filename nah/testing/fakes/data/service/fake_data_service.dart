@@ -18,10 +18,7 @@ class FakeDataService implements DataService {
   ///
   /// Method to get a sample hymn
   @override
-  Future<Result<List<Hymn>>> getHymns(
-    String hymnalLanguage, {
-    int? hymnId,
-  }) async {
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) async {
     if (hymnId != null) {
       return SynchronousFuture(
         Result.success([
@@ -38,23 +35,23 @@ class FakeDataService implements DataService {
   }
 
   @override
-  Future<Result<bool>> deleteHymnCollection(HymnCollection hymnCol) async {
-    final removed = hymnCollections.remove(hymnCol);
-    return SynchronousFuture(Result.success(removed));
+  Future<Result<int>> deleteHymnCollection(HymnCollection hymnCol) async {
+    hymnCollections.remove(hymnCol);
+    return SynchronousFuture(Result.success(1));
   }
 
   @override
-  Future<Result<void>> editHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> editHymnCollection(HymnCollection hymnCol) async {
     final idx = hymnCollections.indexWhere((hc) => hc.id == hymnCol.id);
     hymnCollections[idx] = hymnCol;
 
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
-  Future<Result<void>> insertHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> insertHymnCollection(HymnCollection hymnCol) async {
     hymnCollections.add(hymnCol);
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
@@ -63,9 +60,9 @@ class FakeDataService implements DataService {
   }
 
   @override
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) async {
-    final removed = hymnBookmarks.remove(bookmark);
-    return SynchronousFuture(Result.success(removed));
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark) async {
+    hymnBookmarks.remove(bookmark);
+    return SynchronousFuture(Result.success(1));
   }
 
   @override
@@ -76,13 +73,13 @@ class FakeDataService implements DataService {
   }
 
   @override
-  Future<Result<void>> insertHymnBookmark(HymnBookmark bookmark) async {
+  Future<Result<int>> insertHymnBookmark(HymnBookmark bookmark) async {
     hymnBookmarks.add(bookmark);
-    return SynchronousFuture(Result.success(null));
+    return SynchronousFuture(Result.success(1));
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     hymnCollections.clear();
   }
 }

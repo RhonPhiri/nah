@@ -19,9 +19,9 @@ class HymnBookmarkRepositoryDev implements HymnBookmarkRepository {
   }
 
   @override
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) async {
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark) async {
     final result = await _dataService.deleteHymnBookmark(bookmark);
-    if (result is Success<bool>) {
+    if (result is Success<int>) {
       return Result.success(result.data);
     }
     return Result.error((result as Error<void>).error);
