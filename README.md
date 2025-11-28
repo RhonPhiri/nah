@@ -15,18 +15,18 @@ Through this project, I would like to implement the following principles
 
 ## P L A N
 - Aim is to start with the DATA layer => Models, Repositories & Services
-[ ] Create the necessary object models for the app
-    [ ] Hymn 
-    [ ] Hymnal
-    [ ] Hymn Collection
-    [ ] Hymn Bookmark
+[x] Create the necessary object models for the app
+    [x] Hymn 
+    [x] Hymnal
+    [x] Hymn Collection
+    [x] Hymn Bookmark
     
-[ ] Create & Implement Repositories
-    [ ] Hymn Repository
-    [ ] Hymnal Repository
-    [ ] Hymn Collection Repository
-    [ ] Hymn Bookmark Repository
+[x] Create & Implement Repositories
+    [x] Hymn Repository
+    [x] Hymnal Repository
+    [x] Hymn Collection Repository
+    [x] Hymn Bookmark Repository
     
-[ ] Implement SQFLITE Database Functionality
-    [ ] Handle table creation
-    [ ] Methods to fetch & insert data
+[x] Implement SQFLITE Database Functionality
+    [x] Handle table creation
+    [x] Methods to fetch & insert data
