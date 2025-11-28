@@ -65,7 +65,6 @@ class NahDbService implements DataService {
 
   /// Method to populate the database upon creation
   FutureOr<void> _onCreate(Database db, int version) async {
-    /// Create hymnal table
     db.execute('''
       CREATE TABLE hymnal (
         hymnal_id INTEGER PRIMARY KEY,
@@ -76,7 +75,7 @@ class NahDbService implements DataService {
 
     db.execute('''
       CREATE TABLE hymn (
-        hymn_id INTEGER,
+        hymn_id INTEGER NOT NULL,
         hymn_title TEXT NOT NULL,
         hymn_details TEXT,
         hymn_lyrics TEXT NOT NULL,
@@ -117,7 +116,7 @@ class NahDbService implements DataService {
       'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnal_id);',
     );
     await db.execute(
-      'CREATE INDEX idx_bookmark_collection_id ON hymn_bookmark (hymn_collection_id);',
+      'CREATE INDEX idx_bookmark_collection_id ON $tableHymnBookmark (hymn_collection_id);',
     );
   }
 
@@ -278,8 +277,8 @@ class NahDbService implements DataService {
     try {
       final no = await db.delete(
         tableHymnBookmark,
-        where: 'hymn_bookmark_id = ?',
-        whereArgs: [bookmark.id],
+        where: 'hymn_bookmark_id = ? AND hymn_collection_id = ?',
+        whereArgs: [bookmark.id, bookmark.hymnCollectionId],
       );
 
       if (no == 0) {

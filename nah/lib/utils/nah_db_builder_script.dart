@@ -55,7 +55,7 @@ void main(List<String> args) {
 
     db.execute('''
       CREATE TABLE hymn (
-        hymn_id INTEGER,
+        hymn_id INTEGER NOT NULL,
         hymn_title TEXT NOT NULL,
         hymn_details TEXT,
         hymn_lyrics TEXT NOT NULL,
@@ -149,13 +149,10 @@ void main(List<String> args) {
 
     stderr.writeln("Creating Indices...");
     // create indexes after bulk insert
+    db.execute('CREATE INDEX idx_hymn_hymnal_id ON hymn (hymnal_id);');
     db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_hymn_hymnal_id ON hymn (hymnal_id);',
+      'CREATE INDEX idx_bookmark_collection_id ON hymn_bookmark (hymn_collection_id);',
     );
-    db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_bookmark_collection_id ON hymn_bookmark (hymn_collection_id);',
-    );
-
     db.close();
     stderr.writeln('Prebuilt DB written to $outFile🔥🔥');
   } on Exception catch (e, stackTrace) {

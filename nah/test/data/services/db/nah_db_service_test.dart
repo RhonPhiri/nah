@@ -35,7 +35,7 @@ Future<void> main() async {
 
     database.execute('''
        CREATE TABLE $tableHymn (
-          hymn_id INTEGER,
+          hymn_id INTEGER NOT NULL,
           hymn_title TEXT NOT NULL,
           hymn_details TEXT,
           hymn_lyrics TEXT NOT NULL,
@@ -176,6 +176,26 @@ Future<void> main() async {
         expect(hymnBookmarks.first.hymnCollectionId, 3);
       },
     );
+
+    test('should delete a bookmark', () async {
+      final no = await database.delete(
+        tableHymnBookmark,
+        where: 'hymn_bookmark_id = ? AND hymn_collection_id = ?',
+        whereArgs: [1, 3],
+      );
+
+      expect(no, 1);
+      final hymnBookmarkMaps = await database.query(
+        tableHymnBookmark,
+        where: 'hymn_collection_id = ?',
+        whereArgs: [3],
+      );
+
+      final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+
+      expect(hymnBookmarks.first, isA<HymnBookmark>());
+      expect(hymnBookmarks.length, hymnBookmarkLength - 1);
+    });
 
     test('should delete a hymn collection', () async {
       final no = await database.rawDelete(
