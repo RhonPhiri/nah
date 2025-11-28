@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
 import 'package:nah/data/services/data_service.dart';
+import 'package:nah/data/services/db/db_helper.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
@@ -66,7 +67,7 @@ class NahDbService implements DataService {
   FutureOr<void> _onCreate(Database db, int version) async {
     /// Create hymnal table
     await db.execute('''
-      CREATE TABLE hymnal (
+      CREATE TABLE $tableHymnal (
 	      hymnal_id INTEGER PRIMARY KEY,
 	      hymnal_title TEXT NOT NULL,
 	      hymnal_language TEXT NOT NULL
@@ -75,7 +76,7 @@ class NahDbService implements DataService {
 
     /// Create hymn table
     await db.execute('''
-      CREATE TABLE hymn (
+      CREATE TABLE $tableHymn (
         hymn_id INTEGER,
         hymn_title TEXT NOT NULL,
         hymn_details TEXT,
@@ -107,7 +108,7 @@ class NahDbService implements DataService {
 	      FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
 	        ON UPDATE CASCADE
 	        ON DELETE CASCADE,
-	      FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+	      FOREIGN KEY (hymnal_id) REFERENCES $tableHymnal (hymnal_id)
          ON UPDATE CASCADE
          ON DELETE CASCADE
       );
@@ -115,7 +116,9 @@ class NahDbService implements DataService {
 
     await _insertData(db);
 
-    await db.execute('CREATE INDEX idx_hymn_hymnal_id ON hymn (hymnal_id);');
+    await db.execute(
+      'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnal_id);',
+    );
     await db.execute(
       'CREATE INDEX idx_bookmark_collection_id ON hymn_bookmark (hymn_collection_id);',
     );
@@ -135,7 +138,7 @@ class NahDbService implements DataService {
 
     for (Hymnal hymnal in hymnals) {
       batch.rawInsert(
-        'INSERT INTO hymnal (hymnal_id, hymnal_title, hymnal_language) VALUES (?, ?, ?)',
+        'INSERT INTO $tableHymnal (hymnal_id, hymnal_title, hymnal_language) VALUES (?, ?, ?)',
         [hymnal.id, hymnal.title, hymnal.language],
       );
     }
@@ -164,7 +167,7 @@ class NahDbService implements DataService {
 
     for (Hymn hymn in hymns) {
       batch.rawInsert(
-        'INSERT INTO hymn (hymn_id, hymn_title, hymn_details, hymn_lyrics, hymnal_id) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO $tableHymn (hymn_id, hymn_title, hymn_details, hymn_lyrics, hymnal_id) VALUES (?, ?, ?, ?, ?)',
         [
           hymn.id,
           hymn.title,
@@ -179,65 +182,226 @@ class NahDbService implements DataService {
   }
 
   /// Method to print the version of the database
-  FutureOr<void> _onOpen(Database db) async =>
-      log.info("db Version ${await db.getVersion()}");
+  FutureOr<void> _onOpen(Database db) async {
+    log.info("db Version ${await db.getVersion()}");
+  }
+
+  @override
+  Future<Result<List<Hymnal>>> getHymnals() async {
+    final db = await database;
+
+    try {
+      final hymnalMaps = await db.rawQuery('SELECT * FROM $tableHymnal');
+
+      final hymnals = mapper<Hymnal>(hymnalMaps);
+
+      return Result.success(hymnals);
+    } catch (e, stackTrace) {
+      log.severe("Failed to get HYMNALS", e, stackTrace);
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) async {
+    final db = await database;
+
+    final List<Map<String, Object?>> hymnMaps;
+    try {
+      if (hymnId != null) {
+        hymnMaps = await db.rawQuery(
+          'SELECT * FROM $tableHymn WHERE hymn_id = ? AND hymnal_id = ?',
+          [hymnId, hymnalId],
+        );
+      } else {
+        hymnMaps = await db.rawQuery(
+          'SELECT * FROM $tableHymn WHERE hymnal_id = ?',
+          [hymnalId],
+        );
+      }
+
+      final hymns = mapper<Hymn>(hymnMaps);
+
+      return Result.success(hymns);
+    } catch (e, stackTrace) {
+      log.severe("Failed to get HYMNS", e, stackTrace);
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<int>> insertHymnBookmark(HymnBookmark bookmark) async {
+    final db = await database;
+    try {
+      final id = await db.insert(tableHymnBookmark, {
+        "hymn_bookmark_id": bookmark.id,
+        "hymn_bookmark_title": bookmark.title,
+        "hymn_collection_id": bookmark.hymnCollectionId,
+        "hymnal_id": bookmark.hymnalId,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+
+      if (id == 0) {
+        log.severe("Error on Inserting the hymn bookmark into the database");
+        return Result.error(
+          Exception("Error on Inserting the hymn bookmark into the database"),
+        );
+      }
+      return Result.success(id);
+    } on Exception catch (e, stackTrace) {
+      log.severe("Failed to insert hymn bookmarks", e, stackTrace);
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<List<HymnBookmark>>> getHymnBookmarks(
+    int hymnCollectionId,
+  ) async {
+    final db = await database;
+    try {
+      final hymnBookmarkMaps = await db.query(
+        tableHymnBookmark,
+        where: 'hymn_collection_id = ?',
+        whereArgs: [hymnCollectionId],
+      );
+
+      final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+
+      return Result.success(hymnBookmarks);
+    } catch (e, stackTrace) {
+      log.severe("Failed to get hymn bookmarks", e, stackTrace);
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark) async {
+    final db = await database;
+
+    try {
+      final no = await db.delete(
+        tableHymnBookmark,
+        where: 'hymn_bookmark_id = ?',
+        whereArgs: [bookmark.id],
+      );
+
+      if (no == 0) {
+        final message = "Error deleting the hymn bookmark ${bookmark.title}";
+        log.severe(message);
+        return Result.error(Exception(message));
+      } else {
+        return Result.success(no);
+      }
+    } catch (e, stackTrace) {
+      final message = "Failed to delete the hymn bookmark ${bookmark.title}";
+      log.severe(message, e, stackTrace);
+      return Result.error(Exception("$message; ${e.toString()}"));
+    }
+  }
+
+  @override
+  Future<Result<int>> insertHymnCollection(HymnCollection hymnCol) async {
+    final db = await database;
+    try {
+      final id = await db.insert(tableHymnCollection, {
+        "hymn_collection_id": hymnCol.id,
+        "hymn_collection_title": hymnCol.title,
+        "hymn_collection_description": hymnCol.description,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+
+      if (id == 0) {
+        final message =
+            "Error on Inserting the hymn collection into the database";
+        log.severe(message);
+        return Result.error(Exception(message));
+      }
+      return Result.success(id);
+    } on Exception catch (e, stackTrace) {
+      log.severe(
+        "Failed to insert hymn collections into database",
+        e,
+        stackTrace,
+      );
+      return Result.error(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<int>> deleteHymnCollection(HymnCollection hymnCol) async {
+    final db = await database;
+
+    try {
+      final no = await db.delete(
+        tableHymnCollection,
+        where: 'hymn_collection_id = ?',
+        whereArgs: [hymnCol.id],
+      );
+
+      if (no == 0) {
+        final message = "Error deleting the hymn collection ${hymnCol.title}";
+        log.severe(message);
+        return Result.error(Exception(message));
+      } else {
+        return Result.success(no);
+      }
+    } catch (e, stackTrace) {
+      final message = "Failed to delete the hymn collection ${hymnCol.title}";
+      log.severe(message, e, stackTrace);
+      return Result.error(Exception("$message; ${e.toString()}"));
+    }
+  }
+
+  @override
+  Future<Result<int>> editHymnCollection(HymnCollection hymnCol) async {
+    final db = await database;
+
+    try {
+      final no = await db.update(
+        tableHymnCollection,
+        {
+          "hymn_collection_id": hymnCol.id,
+          "hymn_collection_title": hymnCol.title,
+          "hymn_collection_description": hymnCol.description,
+        },
+        where: 'hymn_collection_id = ?',
+        whereArgs: [hymnCol.id],
+      );
+
+      if (no == 0) {
+        final message = "Error updating ${hymnCol.title}";
+        log.severe(message);
+        return Result.error(Exception(message));
+      }
+
+      return Result.success(no);
+    } catch (e, stackTrace) {
+      final message = "Error updating ${hymnCol.title}";
+      log.severe(message, e, stackTrace);
+      return Result.error(Exception("$message; ${e.toString()}"));
+    }
+  }
+
+  @override
+  Future<Result<List<HymnCollection>>> getHymnCollections() async {
+    final db = await database;
+    try {
+      final hymnCollectionMaps = await db.query(tableHymnCollection);
+
+      final hymnCollections = mapper<HymnCollection>(hymnCollectionMaps);
+
+      return Result.success(hymnCollections);
+    } catch (e, stackTrace) {
+      log.severe("Failed to get hymn collections", e, stackTrace);
+      return Result.error(Exception(e.toString()));
+    }
+  }
 
   @override
   Future<void> close() async {
-    await _database?.close();
-  }
-
-  @override
-  Future<Result<List<Hymnal>>> getHymnals() {
-    // TODO: implement getHymnals
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<List<Hymn>>> getHymns(int hymnalId, {int? hymnId}) {
-    // TODO: implement getHymns
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> insertHymnBookmark(HymnBookmark bookmark) {
-    // TODO: implement insertHymnBookmark
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<List<HymnBookmark>>> getHymnBookmarks(int hymnCollectionId) {
-    // TODO: implement getHymnBookmarks
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) {
-    // TODO: implement deleteHymnBookmark
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> insertHymnCollection(HymnCollection hymnCol) {
-    // TODO: implement insertHymnCollection
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<bool>> deleteHymnCollection(HymnCollection hymnCol) {
-    // TODO: implement deleteHymnCollection
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> editHymnCollection(HymnCollection hymnCol) {
-    // TODO: implement editHymnCollection
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<List<HymnCollection>>> getHymnCollections() {
-    // TODO: implement getHymnCollections
-    throw UnimplementedError();
+    try {
+      await _database?.close();
+    } on Exception catch (e, stackTrace) {
+      log.severe("Error closing the database", e, stackTrace);
+    }
   }
 }

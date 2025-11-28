@@ -50,23 +50,23 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<bool>> deleteHymnCollection(HymnCollection hymnCol) async {
-    final removed = hymnCollections.remove(hymnCol);
-    return Result.success(removed);
+  Future<Result<int>> deleteHymnCollection(HymnCollection hymnCol) async {
+    hymnCollections.remove(hymnCol);
+    return Result.success(1);
   }
 
   @override
-  Future<Result<void>> editHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> editHymnCollection(HymnCollection hymnCol) async {
     final idx = hymnCollections.indexWhere((hc) => hc.id == hymnCol.id);
     hymnCollections[idx] = hymnCol;
 
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
-  Future<Result<void>> insertHymnCollection(HymnCollection hymnCol) async {
+  Future<Result<int>> insertHymnCollection(HymnCollection hymnCol) async {
     hymnCollections.add(hymnCol);
-    return Result.success(null);
+    return Result.success(1);
   }
 
   @override
@@ -86,15 +86,15 @@ class DevDataService implements DataService {
   }
 
   @override
-  Future<Result<void>> insertHymnBookmark(HymnBookmark bookmark) async {
+  Future<Result<int>> insertHymnBookmark(HymnBookmark bookmark) async {
     hymnBookmarks.add(bookmark);
-    return Result.success(null);
+    return Result.success(bookmark.id);
   }
 
   @override
-  Future<Result<bool>> deleteHymnBookmark(HymnBookmark bookmark) async {
-    final removed = hymnBookmarks.remove(bookmark);
-    return Result.success(removed);
+  Future<Result<int>> deleteHymnBookmark(HymnBookmark bookmark) async {
+    hymnBookmarks.remove(bookmark);
+    return Result.success(1);
   }
 
   @override

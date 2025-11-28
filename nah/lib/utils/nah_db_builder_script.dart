@@ -4,7 +4,7 @@ import 'package:path/path.dart' show join;
 import 'package:sqlite3/sqlite3.dart';
 
 void main(List<String> args) {
-  stderr.writeln("Running script");
+  stdout.writeln("Running script...");
 
   // Prefer working directory, but fall back to script location if necessary.
   var projectRoot = Directory.current.path;
@@ -19,15 +19,13 @@ void main(List<String> args) {
   /// projectroot/assets/hymns
   final hymnsDir = join(assetsDir, 'hymns');
 
-  /// projectroot/assets => Where the database will be placed
-  final outDir = join(projectRoot, 'assets');
-
   /// projectroot/assets/nah_prebuilt.db
-  final outFile = join(outDir, 'nah_prebuilt.db');
+  final outFile = join(assetsDir, 'nah_prebuilt.db');
 
   // Ensure output directory exists so sqlite3 can create the DB file inside it.
-  if (!Directory(outDir).existsSync()) {
-    Directory(outDir).createSync(recursive: true);
+  if (!Directory(assetsDir).existsSync()) {
+    // If it doesn't, then create
+    Directory(assetsDir).createSync(recursive: true);
   }
 
   // The [File] holds the path on which operations can performed
@@ -48,12 +46,12 @@ void main(List<String> args) {
 
     // create schema (
     db.execute('''
-  CREATE TABLE hymnal (
-    hymnal_id INTEGER PRIMARY KEY,
-    hymnal_title TEXT NOT NULL,
-    hymnal_language TEXT NOT NULL
-  );
-  ''');
+      CREATE TABLE hymnal (
+       hymnal_id INTEGER PRIMARY KEY,
+       hymnal_title TEXT NOT NULL,
+       hymnal_language TEXT NOT NULL
+     );
+    ''');
 
     db.execute('''
       CREATE TABLE hymn (
@@ -98,7 +96,7 @@ void main(List<String> args) {
     final hymnalsMapList = (jsonDecode(hymnalsJson) as List)
         .cast<Map<String, dynamic>>();
 
-    stderr.writeln("Beginging transaction... 🥰");
+    stderr.writeln("Beginging transaction...💪🏼");
 
     // transaction + prepared statements
     db.execute('BEGIN TRANSACTION;');
@@ -158,7 +156,7 @@ void main(List<String> args) {
     );
 
     db.close();
-    stderr.writeln('Prebuilt DB written to $outFile');
+    stderr.writeln('Prebuilt DB written to $outFile🔥🔥');
   } on Exception catch (e, stackTrace) {
     stderr.writeln("Failed to open Database: $e\n$stackTrace");
   }
