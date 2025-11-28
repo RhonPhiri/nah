@@ -114,7 +114,7 @@ Future<void> main() async {
     await database.close();
   });
 
-  group('nah_db_service', () {
+  group('hymnals & hymns', () {
     test('should get hymnals', () async {
       final hymnalMaps = await database.query(tableHymnal);
       final hymnals = mapper<Hymnal>(hymnalMaps);
@@ -146,7 +146,9 @@ Future<void> main() async {
       expect(hymns.length, 1);
       expect(hymns.first.id, 5);
     });
+  });
 
+  group('hymn collections and bookmarks', () {
     test('should get hymn collections', () async {
       final collectionMaps = await database.query(tableHymnCollection);
 
@@ -172,5 +174,20 @@ Future<void> main() async {
         expect(hymnBookmarks.first.hymnCollectionId, 3);
       },
     );
+
+    test('should delete a hymn collection', () async {
+      final no = await database.rawDelete(
+        'DELETE FROM hymn_collection WHERE hymn_collection_id = ?',
+        [3],
+      );
+
+      expect(no, 1, reason: "Only one collection is deleted");
+
+      final collectionMaps = await database.query(tableHymnCollection);
+
+      final hymnCollections = mapper<HymnCollection>(collectionMaps);
+
+      expect(hymnCollections.length, hymnCollectionLength - 1);
+    });
   });
 }
