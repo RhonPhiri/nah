@@ -9,6 +9,8 @@ import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../../../../testing/fakes/domain/models/hymn_collection.dart';
+
 Future<void> main() async {
   const hymnalLength = 5;
   const hymnLength = 10;
@@ -194,7 +196,11 @@ Future<void> main() async {
       final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
 
       expect(hymnBookmarks.first, isA<HymnBookmark>());
-      expect(hymnBookmarks.length, hymnBookmarkLength - 1);
+      expect(
+        hymnBookmarks.length,
+        hymnBookmarkLength - 1,
+        reason: "One bookmark has been deleted",
+      );
     });
 
     test('should delete a hymn collection', () async {
@@ -209,7 +215,11 @@ Future<void> main() async {
 
       final hymnCollections = mapper<HymnCollection>(collectionMaps);
 
-      expect(hymnCollections.length, hymnCollectionLength - 1);
+      expect(
+        hymnCollections.length,
+        hymnCollectionLength - 1,
+        reason: "One collection deleted",
+      );
     });
 
     test(
@@ -223,8 +233,39 @@ Future<void> main() async {
 
         final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
 
-        expect(hymnBookmarks.isEmpty, true);
+        expect(
+          hymnBookmarks.isEmpty,
+          true,
+          reason: "ON DELETE CASCADE functionality worked",
+        );
       },
     );
+
+    test('Should edit a hymn collection', () async {
+      final no = await database.update(
+        tableHymnCollection,
+        {
+          "hymn_collection_id": kHymnCollection.id,
+          "hymn_collection_title": kHymnCollection.title,
+          "hymn_collection_description": kHymnCollection.description,
+        },
+        where: 'hymn_collection_id = ?',
+        whereArgs: [kHymnCollection.id],
+      );
+
+      expect(no, 1, reason: "Only one hymn collection has been edited");
+
+      final collectionMaps = await database.query(tableHymnCollection);
+
+      final hymnCollections = mapper<HymnCollection>(collectionMaps);
+
+      expect(hymnCollections.first, isA<HymnCollection>());
+      expect(
+        hymnCollections.length,
+        hymnCollectionLength - 1,
+        reason: "One hymn collection was deleted in the earlier test",
+      );
+      expect(hymnCollections.first.title, kHymnCollection.title);
+    });
   });
 }

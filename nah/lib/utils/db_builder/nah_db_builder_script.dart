@@ -174,4 +174,7 @@ void main(List<String> args) {
 //   await destFile.writeAsBytes(bytes, flush: true);
 // }
 
-// To run the script, run; dart run lib/utils/nah_db_builder_script.dart
+//
+// To run the script, run;
+// Move to the root dir, then run;
+// Dart run lib/utils/db_builder/nah_db_builder_script.dart
