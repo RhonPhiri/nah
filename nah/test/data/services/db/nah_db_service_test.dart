@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nah/data/services/db/db_helper.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
+import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -154,5 +155,22 @@ Future<void> main() async {
       expect(hymnCollections.first, isA<HymnCollection>());
       expect(hymnCollections.length, hymnCollectionLength);
     });
+
+    test(
+      'should get a list of hymn_bookmarks given a hymn collection id',
+      () async {
+        final hymnBookmarkMaps = await database.query(
+          tableHymnBookmark,
+          where: 'hymn_collection_id = ?',
+          whereArgs: [3],
+        );
+
+        final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+
+        expect(hymnBookmarks.first, isA<HymnBookmark>());
+        expect(hymnBookmarks.length, hymnBookmarkLength);
+        expect(hymnBookmarks.first.hymnCollectionId, 3);
+      },
+    );
   });
 }
