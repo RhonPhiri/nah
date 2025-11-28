@@ -23,6 +23,8 @@ Future<void> main() async {
     databaseFactory = databaseFactoryFfi;
     database = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
+    await database.execute('PRAGMA foreign_keys = ON;');
+
     database.execute('''
        CREATE TABLE $tableHymnal (
           hymnal_id INTEGER PRIMARY KEY,
@@ -189,5 +191,20 @@ Future<void> main() async {
 
       expect(hymnCollections.length, hymnCollectionLength - 1);
     });
+
+    test(
+      'should delete all bookmarks whose hymn collection has been deleted',
+      () async {
+        final hymnBookmarkMaps = await database.query(
+          tableHymnBookmark,
+          where: 'hymn_collection_id = ?',
+          whereArgs: [3],
+        );
+
+        final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+
+        expect(hymnBookmarks.isEmpty, true);
+      },
+    );
   });
 }
