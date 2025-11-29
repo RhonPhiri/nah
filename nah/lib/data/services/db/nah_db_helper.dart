@@ -5,7 +5,8 @@ import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 
 /// Method to transform all maps of an object into that object..
-/// I have made this because I implemented custom keys than those used by the freezed package in the from Json method
+/// I have made this because I implemented custom Map keys used creating and storing data in the database tables
+/// than those used by the freezed package in the from Json method
 List<T> mapper<T>(List<Map<String, Object?>> maps) {
   // Return an empty list if the maps are empty
   if (maps.isEmpty) return <T>[];

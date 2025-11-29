@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
 import 'package:nah/data/services/data_service.dart';
-import 'package:nah/data/services/db/db_helper.dart';
+import 'package:nah/data/services/db/nah_db_helper.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
