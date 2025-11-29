@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
 import 'package:nah/data/services/data_service.dart';
-import 'package:nah/data/services/db/nah_db_helper.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
@@ -67,21 +66,21 @@ class NahDbService implements DataService {
   FutureOr<void> _onCreate(Database db, int version) async {
     db.execute('''
       CREATE TABLE hymnal (
-        hymnal_id INTEGER PRIMARY KEY,
-        hymnal_title TEXT NOT NULL,
-        hymnal_language TEXT NOT NULL
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        language TEXT NOT NULL
      );
     ''');
 
     db.execute('''
       CREATE TABLE hymn (
-        hymn_id INTEGER NOT NULL,
-        hymn_title TEXT NOT NULL,
-        hymn_details TEXT,
-        hymn_lyrics TEXT NOT NULL,
-        hymnal_id INTEGER NOT NULL,
-        PRIMARY KEY(hymn_id, hymnal_id),
-        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+        id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        details TEXT,
+        lyrics TEXT NOT NULL,
+        hymnalId INTEGER NOT NULL,
+        PRIMARY KEY(id, hymnalId),
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
         );
@@ -89,23 +88,23 @@ class NahDbService implements DataService {
 
     db.execute('''
       CREATE TABLE hymn_collection (
-        hymn_collection_id INTEGER PRIMARY KEY,
-        hymn_collection_title TEXT NOT NULL UNIQUE,
-        hymn_collection_description TEXT
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL UNIQUE,
+        description TEXT
       );
     ''');
 
     db.execute('''
       CREATE TABLE hymn_bookmark (
-	      hymn_bookmark_id INTEGER NOT NULL,
-	      hymn_bookmark_title TEXT NOT NULL,
-	      hymn_collection_id INTEGER NOT NULL,
-	      hymnal_id INTEGER NOT NULL,
-        PRIMARY KEY (hymn_bookmark_id, hymn_collection_id)
-	      FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
+	      id INTEGER NOT NULL,
+	      title TEXT NOT NULL,
+	      hymnCollectionId INTEGER NOT NULL,
+	      hymnalId INTEGER NOT NULL,
+        PRIMARY KEY (id, hymnCollectionId)
+	      FOREIGN KEY (hymnCollectionId) REFERENCES hymn_collection (id)
 	        ON UPDATE CASCADE
 	        ON DELETE CASCADE,
-        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
       );
@@ -113,10 +112,10 @@ class NahDbService implements DataService {
     await _insertData(db);
 
     await db.execute(
-      'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnal_id);',
+      'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnalId);',
     );
     await db.execute(
-      'CREATE INDEX idx_bookmark_collection_id ON $tableHymnBookmark (hymn_collection_id);',
+      'CREATE INDEX idx_bookmark_collection_id ON $tableHymnBookmark (hymnCollectionId);',
     );
   }
 
@@ -133,10 +132,7 @@ class NahDbService implements DataService {
     final batch = db.batch();
 
     for (Hymnal hymnal in hymnals) {
-      batch.rawInsert(
-        'INSERT INTO $tableHymnal (hymnal_id, hymnal_title, hymnal_language) VALUES (?, ?, ?)',
-        [hymnal.id, hymnal.title, hymnal.language],
-      );
+      batch.insert(tableHymnal, hymnal.toJson(), conflictAlgorithm: .replace);
     }
 
     await batch.commit(noResult: true);
@@ -161,17 +157,16 @@ class NahDbService implements DataService {
 
     final batch = database.batch();
 
+    // Manual encoding
+    //
     for (Hymn hymn in hymns) {
-      batch.rawInsert(
-        'INSERT INTO $tableHymn (hymn_id, hymn_title, hymn_details, hymn_lyrics, hymnal_id) VALUES (?, ?, ?, ?, ?)',
-        [
-          hymn.id,
-          hymn.title,
-          jsonEncode(hymn.details),
-          jsonEncode(hymn.lyrics),
-          hymnalId,
-        ],
-      );
+      batch.insert(tableHymn, {
+        "id": hymn.id,
+        "title": hymn.title,
+        "details": jsonEncode(hymn.details),
+        "lyrics": jsonEncode(hymn.lyrics),
+        "hymnalId": hymnalId,
+      }, conflictAlgorithm: .replace);
     }
 
     await batch.commit(noResult: true);
@@ -187,9 +182,9 @@ class NahDbService implements DataService {
     final db = await database;
 
     try {
-      final hymnalMaps = await db.rawQuery('SELECT * FROM $tableHymnal');
+      final hymnalMaps = await db.query(tableHymnal);
 
-      final hymnals = mapper<Hymnal>(hymnalMaps);
+      final hymnals = hymnalMaps.map(Hymnal.fromJson).toList();
 
       return Result.success(hymnals);
     } catch (e, stackTrace) {
@@ -205,18 +200,22 @@ class NahDbService implements DataService {
     final List<Map<String, Object?>> hymnMaps;
     try {
       if (hymnId != null) {
-        hymnMaps = await db.rawQuery(
-          'SELECT * FROM $tableHymn WHERE hymn_id = ? AND hymnal_id = ?',
-          [hymnId, hymnalId],
+        hymnMaps = await db.query(
+          tableHymn,
+          where: "id = ? AND hymnalId = ?",
+          whereArgs: [hymnId, hymnalId],
         );
       } else {
-        hymnMaps = await db.rawQuery(
-          'SELECT * FROM $tableHymn WHERE hymnal_id = ?',
-          [hymnalId],
+        hymnMaps = await db.query(
+          tableHymn,
+          where: "hymnalId = ?",
+          whereArgs: [hymnalId],
         );
       }
 
-      final hymns = mapper<Hymn>(hymnMaps);
+      // Haven't used the fromJson method provided by freezed because I have to decode the details & lyrics
+      // & cast them into Maps
+      final hymns = hymnMaps.map(Hymn.fromJson).toList();
 
       return Result.success(hymns);
     } catch (e, stackTrace) {
@@ -229,12 +228,11 @@ class NahDbService implements DataService {
   Future<Result<int>> insertHymnBookmark(HymnBookmark bookmark) async {
     final db = await database;
     try {
-      final id = await db.insert(tableHymnBookmark, {
-        "hymn_bookmark_id": bookmark.id,
-        "hymn_bookmark_title": bookmark.title,
-        "hymn_collection_id": bookmark.hymnCollectionId,
-        "hymnal_id": bookmark.hymnalId,
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      final id = await db.insert(
+        tableHymnBookmark,
+        bookmark.toJson(),
+        conflictAlgorithm: .replace,
+      );
 
       if (id == 0) {
         log.severe("Error on Inserting the hymn bookmark into the database");
@@ -257,11 +255,13 @@ class NahDbService implements DataService {
     try {
       final hymnBookmarkMaps = await db.query(
         tableHymnBookmark,
-        where: 'hymn_collection_id = ?',
+        where: 'hymnCollectionId = ?',
         whereArgs: [hymnCollectionId],
       );
 
-      final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+      final hymnBookmarks = hymnBookmarkMaps
+          .map(HymnBookmark.fromJson)
+          .toList();
 
       return Result.success(hymnBookmarks);
     } catch (e, stackTrace) {
@@ -277,7 +277,7 @@ class NahDbService implements DataService {
     try {
       final no = await db.delete(
         tableHymnBookmark,
-        where: 'hymn_bookmark_id = ? AND hymn_collection_id = ?',
+        where: 'id = ? AND hymnCollectionId = ?',
         whereArgs: [bookmark.id, bookmark.hymnCollectionId],
       );
 
@@ -299,11 +299,11 @@ class NahDbService implements DataService {
   Future<Result<int>> insertHymnCollection(HymnCollection hymnCol) async {
     final db = await database;
     try {
-      final id = await db.insert(tableHymnCollection, {
-        "hymn_collection_id": hymnCol.id,
-        "hymn_collection_title": hymnCol.title,
-        "hymn_collection_description": hymnCol.description,
-      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      final id = await db.insert(
+        tableHymnCollection,
+        hymnCol.toJson(),
+        conflictAlgorithm: .replace,
+      );
 
       if (id == 0) {
         final message =
@@ -329,7 +329,7 @@ class NahDbService implements DataService {
     try {
       final no = await db.delete(
         tableHymnCollection,
-        where: 'hymn_collection_id = ?',
+        where: 'id = ?',
         whereArgs: [hymnCol.id],
       );
 
@@ -354,13 +354,10 @@ class NahDbService implements DataService {
     try {
       final no = await db.update(
         tableHymnCollection,
-        {
-          "hymn_collection_id": hymnCol.id,
-          "hymn_collection_title": hymnCol.title,
-          "hymn_collection_description": hymnCol.description,
-        },
-        where: 'hymn_collection_id = ?',
+        hymnCol.toJson(),
+        where: 'id = ?',
         whereArgs: [hymnCol.id],
+        conflictAlgorithm: .abort,
       );
 
       if (no == 0) {
@@ -383,7 +380,9 @@ class NahDbService implements DataService {
     try {
       final hymnCollectionMaps = await db.query(tableHymnCollection);
 
-      final hymnCollections = mapper<HymnCollection>(hymnCollectionMaps);
+      final hymnCollections = hymnCollectionMaps
+          .map(HymnCollection.fromJson)
+          .toList();
 
       return Result.success(hymnCollections);
     } catch (e, stackTrace) {
