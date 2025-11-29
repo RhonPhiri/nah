@@ -47,21 +47,21 @@ void main(List<String> args) {
     // create schema (
     db.execute('''
       CREATE TABLE hymnal (
-        hymnal_id INTEGER PRIMARY KEY,
-        hymnal_title TEXT NOT NULL,
-        hymnal_language TEXT NOT NULL
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        language TEXT NOT NULL
      );
     ''');
 
     db.execute('''
       CREATE TABLE hymn (
-        hymn_id INTEGER NOT NULL,
-        hymn_title TEXT NOT NULL,
-        hymn_details TEXT,
-        hymn_lyrics TEXT NOT NULL,
-        hymnal_id INTEGER NOT NULL,
-        PRIMARY KEY(hymn_id, hymnal_id),
-        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+        id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        details TEXT,
+        lyrics TEXT NOT NULL,
+        hymnalId INTEGER NOT NULL,
+        PRIMARY KEY(id, hymnalId),
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
         );
@@ -69,23 +69,23 @@ void main(List<String> args) {
 
     db.execute('''
       CREATE TABLE hymn_collection (
-        hymn_collection_id INTEGER PRIMARY KEY,
-        hymn_collection_title TEXT NOT NULL UNIQUE,
-        hymn_collection_description TEXT
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL UNIQUE,
+        description TEXT
       );
     ''');
 
     db.execute('''
       CREATE TABLE hymn_bookmark (
-	      hymn_bookmark_id INTEGER NOT NULL,
-	      hymn_bookmark_title TEXT NOT NULL,
-	      hymn_collection_id INTEGER NOT NULL,
-	      hymnal_id INTEGER NOT NULL,
-        PRIMARY KEY (hymn_bookmark_id, hymn_collection_id)
-	      FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
+	      id INTEGER NOT NULL,
+	      title TEXT NOT NULL,
+	      hymnCollectionId INTEGER NOT NULL,
+	      hymnalId INTEGER NOT NULL,
+        PRIMARY KEY (id, hymnCollectionId)
+	      FOREIGN KEY (hymnCollectionId) REFERENCES hymn_collection (id)
 	        ON UPDATE CASCADE
 	        ON DELETE CASCADE,
-        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
       );
@@ -104,7 +104,7 @@ void main(List<String> args) {
 
     /// Creating the hymnal table and populating it with hymnals
     final insertHymnal = db.prepare(
-      'INSERT INTO hymnal (hymnal_id, hymnal_title, hymnal_language) VALUES (?, ?, ?);',
+      'INSERT INTO hymnal (id, title, language) VALUES (?, ?, ?);',
     );
     for (final map in hymnalsMapList) {
       final id = map['id'];
@@ -116,7 +116,7 @@ void main(List<String> args) {
 
     /// Creating the hymn table and populating it with hymns
     final insertHymn = db.prepare(
-      'INSERT INTO hymn (hymn_id, hymn_title, hymn_details, hymn_lyrics, hymnal_id) VALUES (?, ?, ?, ?, ?);',
+      'INSERT INTO hymn (id, title, details, lyrics, hymnalId) VALUES (?, ?, ?, ?, ?);',
     );
 
     // For every hymnal, load a hymn json file from the assets
@@ -149,9 +149,9 @@ void main(List<String> args) {
 
     stderr.writeln("Creating Indices...");
     // create indexes after bulk insert
-    db.execute('CREATE INDEX idx_hymn_hymnal_id ON hymn (hymnal_id);');
+    db.execute('CREATE INDEX idx_hymn_hymnal_id ON hymn (hymnalId);');
     db.execute(
-      'CREATE INDEX idx_bookmark_collection_id ON hymn_bookmark (hymn_collection_id);',
+      'CREATE INDEX idx_bookmark_collection_id ON hymn_bookmark (hymnCollectionId);',
     );
     db.close();
     stderr.writeln('Prebuilt DB written to $outFile🔥🔥');
