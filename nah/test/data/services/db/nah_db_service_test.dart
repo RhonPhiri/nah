@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nah/data/services/db/nah_db_helper.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
@@ -28,85 +27,81 @@ Future<void> main() async {
     await database.execute('PRAGMA foreign_keys = ON;');
 
     database.execute('''
-       CREATE TABLE $tableHymnal (
-          hymnal_id INTEGER PRIMARY KEY,
-          hymnal_title TEXT NOT NULL,
-          hymnal_language TEXT NOT NULL
-        );
+      CREATE TABLE hymnal (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        language TEXT NOT NULL
+     );
      ''');
 
     database.execute('''
-       CREATE TABLE $tableHymn (
-          hymn_id INTEGER NOT NULL,
-          hymn_title TEXT NOT NULL,
-          hymn_details TEXT,
-          hymn_lyrics TEXT NOT NULL,
-          hymnal_id INTEGER NOT NULL,
-          PRIMARY KEY(hymn_id, hymnal_id),
-          FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
-            ON UPDATE CASCADE
-            ON DELETE CASCADE
+      CREATE TABLE hymn (
+        id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        details TEXT,
+        lyrics TEXT NOT NULL,
+        hymnalId INTEGER NOT NULL,
+        PRIMARY KEY(id, hymnalId),
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
         );
       ''');
 
     /// Create hymn_collection table
     await database.execute('''
-        CREATE TABLE hymn_collection (
-	        hymn_collection_id INTEGER PRIMARY KEY,
-	        hymn_collection_title TEXT NOT NULL UNIQUE,
-      	  hymn_collection_description TEXT
-        );
+      CREATE TABLE hymn_collection (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL UNIQUE,
+        description TEXT
+      );
       ''');
 
     /// Create hymn_bookmark table
     await database.execute('''
-        CREATE TABLE hymn_bookmark (
-	        hymn_bookmark_id INTEGER NOT NULL,
-	        hymn_bookmark_title TEXT NOT NULL,
-	        hymn_collection_id INTEGER NOT NULL,
-	        hymnal_id INTEGER NOT NULL,
-          PRIMARY KEY (hymn_bookmark_id, hymn_collection_id)
-	        FOREIGN KEY (hymn_collection_id) REFERENCES hymn_collection (hymn_collection_id)
-	          ON UPDATE CASCADE
-	          ON DELETE CASCADE,
-	        FOREIGN KEY (hymnal_id) REFERENCES hymnal (hymnal_id)
-            ON UPDATE CASCADE
-            ON DELETE CASCADE
-        );
+      CREATE TABLE hymn_bookmark (
+	      id INTEGER NOT NULL,
+	      title TEXT NOT NULL,
+	      hymnCollectionId INTEGER NOT NULL,
+	      hymnalId INTEGER NOT NULL,
+        PRIMARY KEY (id, hymnCollectionId)
+	      FOREIGN KEY (hymnCollectionId) REFERENCES hymn_collection (id)
+	        ON UPDATE CASCADE
+	        ON DELETE CASCADE,
+        FOREIGN KEY (hymnalId) REFERENCES hymnal (id)
+          ON UPDATE CASCADE
+          ON DELETE CASCADE
+      );
       ''');
 
     final batch = database.batch();
     for (var i = 1; i <= hymnalLength; i++) {
-      batch.insert('hymnal', {
-        'hymnal_id': i,
-        'hymnal_title': 'HYMNAL_$i',
-        'hymnal_language': 'en',
-      });
+      batch.insert('hymnal', {'id': i, 'title': 'HYMNAL_$i', 'language': 'en'});
 
       for (var j = 1; j <= hymnLength; j++) {
         batch.insert('hymn', {
-          'hymn_id': j,
-          'hymn_title': 'HYMN_$j',
-          'hymn_details': jsonEncode({'meta': 'm$j'}),
-          'hymn_lyrics': jsonEncode({'verse': 'v$j'}),
-          'hymnal_id': i,
+          'id': j,
+          'title': 'HYMN_$j',
+          'details': jsonEncode({'meta': 'm$j'}),
+          'lyrics': jsonEncode({'verse': 'v$j'}),
+          'hymnalId': i,
         });
       }
     }
 
     for (var k = 1; k <= hymnCollectionLength; k++) {
       batch.insert('hymn_collection', {
-        'hymn_collection_id': k,
-        'hymn_collection_title': "HYMN_COLLECTION_$k",
-        'hymn_collection_description': "DESCRIPTION",
+        'id': k,
+        'title': "HYMN_COLLECTION_$k",
+        'description': "DESCRIPTION",
       });
 
       for (var m = 1; m <= hymnBookmarkLength; m++) {
         batch.insert('hymn_bookmark', {
-          'hymn_bookmark_id': m,
-          'hymn_bookmark_title': 'HYMN_BOOKMARK_$m',
-          'hymn_collection_id': k,
-          'hymnal_id': 1,
+          'id': m,
+          'title': 'HYMN_BOOKMARK_$m',
+          'hymnCollectionId': k,
+          'hymnalId': 1,
         });
       }
     }
@@ -121,7 +116,8 @@ Future<void> main() async {
   group('hymnals & hymns', () {
     test('should get hymnals', () async {
       final hymnalMaps = await database.query(tableHymnal);
-      final hymnals = mapper<Hymnal>(hymnalMaps);
+
+      final hymnals = hymnalMaps.map(Hymnal.fromJson).toList();
 
       expect(hymnals.first, isA<Hymnal>());
       expect(hymnals.length, hymnalLength);
@@ -129,34 +125,55 @@ Future<void> main() async {
     });
 
     test('should get hymns given a hymnal id', () async {
-      final hymnMaps = await database.rawQuery(
-        'SELECT * FROM $tableHymn WHERE hymnal_id = ?',
-        [1],
+      final hymnMaps = await database.query(
+        tableHymn,
+        where: "hymnalId = ?",
+        whereArgs: [1],
       );
-      final hymns = mapper<Hymn>(hymnMaps);
+      final hymns = hymnMaps.map(Hymn.fromJson).toList();
 
       expect(hymns.first, isA<Hymn>());
       expect(hymns.length, hymnLength);
     });
     test('should get a hymns given a hymnal id and hymnal id', () async {
-      final hymnMaps = await database.rawQuery(
-        'SELECT * FROM $tableHymn WHERE hymn_id = ? AND hymnal_id = ?',
-        [5, 2],
+      final hymnMaps = await database.query(
+        tableHymn,
+        where: "id = ? AND hymnalId = ?",
+        whereArgs: [3, 2],
       );
 
-      final hymns = mapper<Hymn>(hymnMaps);
+      final hymns = hymnMaps.map((map) {
+        return switch (map) {
+          {
+            "id": int id,
+            "title": String title,
+            "details": String details,
+            "lyrics": String lyrics,
+            "hymnalId": int hymnal_id,
+          } =>
+            Hymn(
+              id: id,
+              title: title,
+              details: jsonDecode(details) as Map<String, dynamic>,
+              lyrics: jsonDecode(lyrics) as Map<String, dynamic>,
+            ),
+          _ => throw const FormatException("Unrecognized Hymn Map"),
+        };
+      }).toList();
 
       expect(hymns.first, isA<Hymn>());
       expect(hymns.length, 1);
-      expect(hymns.first.id, 5);
+      expect(hymns.first.id, 3);
     });
   });
 
   group('hymn collections and bookmarks', () {
     test('should get hymn collections', () async {
-      final collectionMaps = await database.query(tableHymnCollection);
+      final hymnCollectionMaps = await database.query(tableHymnCollection);
 
-      final hymnCollections = mapper<HymnCollection>(collectionMaps);
+      final hymnCollections = hymnCollectionMaps
+          .map(HymnCollection.fromJson)
+          .toList();
 
       expect(hymnCollections.first, isA<HymnCollection>());
       expect(hymnCollections.length, hymnCollectionLength);
@@ -167,11 +184,13 @@ Future<void> main() async {
       () async {
         final hymnBookmarkMaps = await database.query(
           tableHymnBookmark,
-          where: 'hymn_collection_id = ?',
+          where: 'hymnCollectionId = ?',
           whereArgs: [3],
         );
 
-        final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+        final hymnBookmarks = hymnBookmarkMaps
+            .map(HymnBookmark.fromJson)
+            .toList();
 
         expect(hymnBookmarks.first, isA<HymnBookmark>());
         expect(hymnBookmarks.length, hymnBookmarkLength);
@@ -182,18 +201,20 @@ Future<void> main() async {
     test('should delete a bookmark', () async {
       final no = await database.delete(
         tableHymnBookmark,
-        where: 'hymn_bookmark_id = ? AND hymn_collection_id = ?',
+        where: 'id = ? AND hymnCollectionId = ?',
         whereArgs: [1, 3],
       );
 
       expect(no, 1);
       final hymnBookmarkMaps = await database.query(
         tableHymnBookmark,
-        where: 'hymn_collection_id = ?',
+        where: 'hymnCollectionId = ?',
         whereArgs: [3],
       );
 
-      final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+      final hymnBookmarks = hymnBookmarkMaps
+          .map(HymnBookmark.fromJson)
+          .toList();
 
       expect(hymnBookmarks.first, isA<HymnBookmark>());
       expect(
@@ -204,16 +225,19 @@ Future<void> main() async {
     });
 
     test('should delete a hymn collection', () async {
-      final no = await database.rawDelete(
-        'DELETE FROM hymn_collection WHERE hymn_collection_id = ?',
-        [3],
+      final no = await database.delete(
+        tableHymnCollection,
+        where: 'id = ?',
+        whereArgs: [3],
       );
 
       expect(no, 1, reason: "Only one collection is deleted");
 
       final collectionMaps = await database.query(tableHymnCollection);
 
-      final hymnCollections = mapper<HymnCollection>(collectionMaps);
+      final hymnCollections = collectionMaps
+          .map(HymnCollection.fromJson)
+          .toList();
 
       expect(
         hymnCollections.length,
@@ -227,11 +251,13 @@ Future<void> main() async {
       () async {
         final hymnBookmarkMaps = await database.query(
           tableHymnBookmark,
-          where: 'hymn_collection_id = ?',
+          where: 'hymnCollectionId = ?',
           whereArgs: [3],
         );
 
-        final hymnBookmarks = mapper<HymnBookmark>(hymnBookmarkMaps);
+        final hymnBookmarks = hymnBookmarkMaps
+            .map(HymnBookmark.fromJson)
+            .toList();
 
         expect(
           hymnBookmarks.isEmpty,
@@ -244,20 +270,19 @@ Future<void> main() async {
     test('Should edit a hymn collection', () async {
       final no = await database.update(
         tableHymnCollection,
-        {
-          "hymn_collection_id": kHymnCollection.id,
-          "hymn_collection_title": kHymnCollection.title,
-          "hymn_collection_description": kHymnCollection.description,
-        },
-        where: 'hymn_collection_id = ?',
+        kHymnCollection.toJson(),
+        where: 'id = ?',
         whereArgs: [kHymnCollection.id],
+        conflictAlgorithm: .abort,
       );
 
       expect(no, 1, reason: "Only one hymn collection has been edited");
 
       final collectionMaps = await database.query(tableHymnCollection);
 
-      final hymnCollections = mapper<HymnCollection>(collectionMaps);
+      final hymnCollections = collectionMaps
+          .map(HymnCollection.fromJson)
+          .toList();
 
       expect(hymnCollections.first, isA<HymnCollection>());
       expect(
