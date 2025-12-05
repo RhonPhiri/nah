@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nah/utils/result.dart';
 
+/// [Command] is an implementation of the command design pattern.
+/// Aiming to prevent code duplication of the state for various actions.
 abstract class Command<T> extends ChangeNotifier {
   Result<T>? _result;
   Result<T>? get result => _result;
