@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'hymn.freezed.dart';
@@ -22,11 +20,5 @@ abstract class Hymn with _$Hymn {
     required Map<String, dynamic> lyrics,
   }) = _Hymn;
 
-  factory Hymn.fromJson(Map<String, Object?> json) {
-    final decodedMap = Map<String, dynamic>.from(json);
-    decodedMap['details'] = jsonDecode(json['details'] as String);
-    decodedMap['lyrics'] = jsonDecode(json['lyrics'] as String);
-
-    return _$HymnFromJson(decodedMap);
-  }
+  factory Hymn.fromJson(Map<String, Object?> json) => _$HymnFromJson(json);
 }
