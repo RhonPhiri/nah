@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nah/ui/core/theme/dimens.dart';
 import 'package:nah/ui/home/view_model/home_view_model.dart';
-import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.viewModel, required this.pages});

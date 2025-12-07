@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nah/routing/routes.dart';
 import 'package:nah/ui/core/theme/dimens.dart';
-import 'package:nah/ui/hymn_details/widgets/details_screen.dart';
-import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
 
 class HymnPage extends StatelessWidget {
   const HymnPage({
