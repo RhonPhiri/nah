@@ -6,7 +6,7 @@ import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../../../testing/fakes/domain/models/hymn_collection.dart';
+import '../../../testing/fakes/domain/models/hymn_collection.dart';
 
 Future<void> main() async {
   const hymnalLength = 5;
