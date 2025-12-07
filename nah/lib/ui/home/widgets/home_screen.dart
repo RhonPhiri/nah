@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nah/ui/core/theme/dimens.dart';
 import 'package:nah/ui/home/view_model/home_view_model.dart';
+import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.viewModel, required this.pages});
@@ -46,35 +48,92 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: widget.viewModel.setSelectedIndex,
-        children: widget.pages,
-      ),
-      bottomNavigationBar: AnimatedBuilder(
-        animation: widget.viewModel,
-        builder: (context, _) => NavigationBar(
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.library_music_outlined),
-              selectedIcon: Icon(Icons.library_music),
-              label: "Hymns",
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.collections_bookmark_outlined),
-              selectedIcon: Icon(Icons.collections_bookmark_rounded),
-              label: "Hymn Collections",
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.info_outline_rounded),
-              selectedIcon: Icon(Icons.info_rounded),
-              label: "info",
+    final isLargeScreen =
+        Dimens(context).isLarge || Dimens(context).isExtraLarge;
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Row(
+          children: [
+            !Dimens(context).isCompact
+                ? AnimatedBuilder(
+                    key: ValueKey("HOME_NAVIGATION_RAIL"),
+                    animation: widget.viewModel,
+                    builder: (context, _) {
+                      return NavigationRail(
+                        groupAlignment: -0.85,
+                        extended: isLargeScreen,
+
+                        minExtendedWidth: 160,
+                        labelType: !isLargeScreen
+                            ? NavigationRailLabelType.selected
+                            : NavigationRailLabelType.none,
+
+                        destinations: [
+                          NavigationRailDestination(
+                            icon: Icon(Icons.library_music_outlined),
+                            selectedIcon: Icon(Icons.library_music),
+
+                            label: Text("Hymns"),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.collections_bookmark_outlined),
+                            selectedIcon: Icon(
+                              Icons.collections_bookmark_rounded,
+                            ),
+
+                            label: Text("Collections"),
+                          ),
+                          NavigationRailDestination(
+                            icon: Icon(Icons.info_outline_rounded),
+                            selectedIcon: Icon(Icons.info_rounded),
+
+                            label: Text("Info"),
+                          ),
+                        ],
+                        selectedIndex: widget.viewModel.selectedIdx,
+                        onDestinationSelected:
+                            widget.viewModel.setSelectedIndex,
+                      );
+                    },
+                  )
+                : SizedBox.shrink(),
+            Flexible(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: widget.viewModel.setSelectedIndex,
+                children: widget.pages,
+              ),
             ),
           ],
-          selectedIndex: widget.viewModel.selectedIdx,
-          onDestinationSelected: widget.viewModel.setSelectedIndex,
         ),
+        bottomNavigationBar: Dimens(context).isCompact
+            ? AnimatedBuilder(
+                key: ValueKey("HOME_NAVIGATION_BAR"),
+                animation: widget.viewModel,
+                builder: (context, _) => NavigationBar(
+                  destinations: [
+                    NavigationDestination(
+                      icon: Icon(Icons.library_music_outlined),
+                      selectedIcon: Icon(Icons.library_music),
+                      label: "Hymns",
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.collections_bookmark_outlined),
+                      selectedIcon: Icon(Icons.collections_bookmark_rounded),
+                      label: "Collections",
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.info_outline_rounded),
+                      selectedIcon: Icon(Icons.info_rounded),
+                      label: "Info",
+                    ),
+                  ],
+                  selectedIndex: widget.viewModel.selectedIdx,
+                  onDestinationSelected: widget.viewModel.setSelectedIndex,
+                ),
+              )
+            : SizedBox.shrink(),
       ),
     );
   }
