@@ -51,7 +51,8 @@ class HymnalViewModel extends ChangeNotifier {
       switch (result) {
         case Success<int?>():
           if (result.data == null) {
-            _selectHymnalId(_hymnals.first.id);
+            _selectHymnalId(0);
+            break;
           }
           _selectedHymnalId = result.data;
         case Error<int?>():
