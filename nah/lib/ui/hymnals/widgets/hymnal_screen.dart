@@ -35,10 +35,12 @@ class _HymnalScreenState extends State<HymnalScreen> {
         body: ListenableBuilder(
           listenable: widget.viewModel.load,
           builder: (context, child) {
-            if (widget.viewModel.load.running) {
+            if (widget.viewModel.load.running ||
+                widget.viewModel.getHymnalId.running) {
               return CircularProgressIndicator();
             }
-            if (widget.viewModel.load.error) {
+            if (widget.viewModel.load.error ||
+                widget.viewModel.getHymnalId.error) {
               return ErrorButton(text: "Error while loading hymnals");
             }
             return child!;
