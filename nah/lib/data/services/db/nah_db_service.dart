@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
@@ -17,12 +17,15 @@ import 'package:path/path.dart';
 class NahDbService implements DataService {
   final log = Logger("NAH_DB_SERVICE");
 
+  /// Variable to cache the database instance
   static Database? _database;
 
+  /// Getter to retain an instance of the database
   Future<Database> get database async {
     return _database ??= await _initDatabase();
   }
 
+  /// Method called during initial initialization of the database
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, nahDnName);
@@ -44,27 +47,27 @@ class NahDbService implements DataService {
   }
 
   // Method to run during database initialization; Copying the prebuilt database into the device
-  Future<void> _ensurePrebuiltDbCopied(String destPath) async {
-    // Path on the device obtained using the getFatabasesPath() method + join & loading it itno FILE()
-    final destFile = File(destPath);
-    // Stop the function if the file laredy exists
-    if (await destFile.exists()) {
-      log.fine("NahDatabase already exists 👍");
-      return;
-    }
+  // Future<void> _ensurePrebuiltDbCopied(String destPath) async {
+  //   // Path on the device obtained using the getFatabasesPath() method + join & loading it itno FILE()
+  //   final destFile = File(destPath);
+  //   // Stop the function if the file laredy exists
+  //   if (await destFile.exists()) {
+  //     log.fine("NahDatabase already exists 👍");
+  //     return;
+  //   }
 
-    log.fine("Loading prebuit Nah Database 🔥");
-    // Since flutter is now running, rootbundle can now be used and loaded inform of bytes
-    try {
-      final data = await rootBundle.load(Assets.prebuiltDb);
-      final bytes = data.buffer.asUint8List();
-      // Recursive true; Creates the file and libraries if not created yet
-      await destFile.create(recursive: true);
-      await destFile.writeAsBytes(bytes, flush: true);
-    } on Exception catch (e) {
-      log.warning("Error loading the prebuilt NahDb", e);
-    }
-  }
+  //   log.fine("Loading prebuit Nah Database 🔥");
+  //   // Since flutter is now running, rootbundle can now be used and loaded inform of bytes
+  //   try {
+  //     final data = await rootBundle.load(Assets.prebuiltDb);
+  //     final bytes = data.buffer.asUint8List();
+  //     // Recursive true; Creates the file and libraries if not created yet
+  //     await destFile.create(recursive: true);
+  //     await destFile.writeAsBytes(bytes, flush: true);
+  //   } on Exception catch (e) {
+  //     log.warning("Error loading the prebuilt NahDb", e);
+  //   }
+  // }
 
   /// Method to add support for cascade delete
   FutureOr<void> _onConfigure(Database db) async {
@@ -119,7 +122,7 @@ class NahDbService implements DataService {
           ON DELETE CASCADE
       );
     ''');
-    await _insertData(db);
+    await _insertHymnalData(db);
 
     await db.execute(
       'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnalId);',
@@ -129,13 +132,14 @@ class NahDbService implements DataService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _loadEmbeddedAsset(String asset) async {
-    final localData = await rootBundle.loadString(asset);
-    return (jsonDecode(localData) as List).cast<Map<String, dynamic>>();
+  List<Map<String, dynamic>> _parseJsonForCompute(String jsonData) {
+    return (jsonDecode(jsonData) as List).cast<Map<String, dynamic>>();
   }
 
-  Future<void> _insertData(Database db) async {
-    final hymnalMaps = await _loadEmbeddedAsset(Assets.hymnals);
+  Future<void> _insertHymnalData(Database db) async {
+    final hymnalJson = await rootBundle.loadString(Assets.hymnals);
+
+    final hymnalMaps = await compute(_parseJsonForCompute, hymnalJson);
 
     final hymnals = hymnalMaps.map(Hymnal.fromJson).toList();
 
@@ -162,9 +166,11 @@ class NahDbService implements DataService {
     required String language,
   }) async {
     try {
-      final hymnMaps = await _loadEmbeddedAsset(
+      final hymnJson = await rootBundle.loadString(
         "${Assets.hymns}${language.toLowerCase()}.json",
       );
+
+      final hymnMaps = await compute(_parseJsonForCompute, hymnJson);
 
       final hymns = hymnMaps.map(Hymn.fromJson).toList();
 
