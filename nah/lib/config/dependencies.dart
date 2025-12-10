@@ -8,31 +8,43 @@ import 'package:nah/data/services/shared_pref_service.dart';
 import 'package:nah/ui/home/view_model/home_view_model.dart';
 import 'package:nah/ui/hymnals/view_model/hymnal_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 /// Instantiating the get_it package
 final getIt = GetIt.instance;
 
 /// Method configuring the dependencies using get_it
-void configureDependencies() {
-  getIt.registerLazySingleton<DataService>(
-    () => NahDbService(),
+Future<void> configureDependencies() async {
+  // Registering the database using the lazy singleton soo that it is only instantiated once
+  getIt.registerSingletonAsync<DataService>(
+    () async {
+      final db = NahDbService();
+      await db.database;
+      return db;
+    },
     onCreated: (instance) => debugPrint("NahDb DataService Created"),
-    dispose: (param) => param.close(),
+    dispose: (db) => db.close(),
   );
 
-  getIt.registerSingleton<SharedPrefService>(SharedPrefService());
-}
+  await getIt.isReady<DataService>();
 
-final providers = [
-  // TODO: Review the provider get it DI below
-  Provider<HymnalRepository>(
-    create: (context) => HymnalRepositoryDev(
+  getIt.registerSingleton<SharedPrefService>(SharedPrefService());
+
+  getIt.registerFactory<HymnalRepository>(
+    () => HymnalRepositoryDev(
       dataService: getIt<DataService>(),
       prefs: getIt<SharedPrefService>(),
     ),
-  ),
-  ChangeNotifierProvider(
-    create: (context) => HymnalViewModel(hymnalRepository: context.read()),
-  ),
-  ChangeNotifierProvider<HomeViewModel>(create: (context) => HomeViewModel()),
-];
+  );
+}
+
+List<SingleChildWidget> get providers {
+  return [
+    ChangeNotifierProvider<HomeViewModel>(create: (context) => HomeViewModel()),
+
+    ChangeNotifierProvider<HymnalViewModel>(
+      create: (context) =>
+          HymnalViewModel(hymnalRepository: getIt<HymnalRepository>()),
+    ),
+  ];
+}
