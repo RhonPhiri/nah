@@ -3,8 +3,11 @@ import 'package:nah/config/dependencies.dart';
 import 'package:nah/routing/router.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  configureDependencies();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize the Db & the Shared Preferences
+  await configureDependencies();
   runApp(MultiProvider(providers: providers, child: const MyApp()));
 }
 
