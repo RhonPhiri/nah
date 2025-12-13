@@ -26,7 +26,6 @@ class HymnalViewModel extends ChangeNotifier {
 
   late final Command0 load;
   late final Command0 getHymnalId;
-
   late final Command1 selectHymnalId;
 
   Future<Result<List<Hymnal>>> _load() async {

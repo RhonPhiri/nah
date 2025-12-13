@@ -81,8 +81,8 @@ class _HymnalScreenState extends State<HymnalScreen> {
   }
 
   void _onHymnalSelected() {
-    if (widget.viewModel.selectHymnalId.completed) {
-      widget.viewModel.selectHymnalId.clearResult();
+    if (widget.viewModel.getHymnalId.completed) {
+      widget.viewModel.getHymnalId.clearResult();
       context.pop();
     }
   }

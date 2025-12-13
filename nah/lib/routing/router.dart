@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 GoRouter get router {
   return GoRouter(
     initialLocation: Routes.home,
+    debugLogDiagnostics: true,
     routes: [
       GoRoute(
         path: Routes.home,
