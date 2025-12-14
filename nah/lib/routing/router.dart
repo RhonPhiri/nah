@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nah/data/repositories/usage_status_repository.dart/usage_status_repository.dart';
 import 'package:nah/routing/routes.dart';
 import 'package:nah/ui/about/widgets/about_page.dart';
 import 'package:nah/ui/home/widgets/home_screen.dart';
@@ -8,11 +10,19 @@ import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
 import 'package:nah/ui/hymns/widgets/hymn_page.dart';
 import 'package:provider/provider.dart';
 
-GoRouter get router {
+GoRouter router(UsageStatusRepository usageStateRepo) {
   return GoRouter(
     initialLocation: Routes.home,
+    redirect: _redirect,
+    refreshListenable: usageStateRepo,
     debugLogDiagnostics: true,
     routes: [
+      GoRoute(
+        path: Routes.onBoarding,
+        builder: (context, state) {
+          return HymnalScreen(viewModel: context.read(), isOnboarding: true);
+        },
+      ),
       GoRoute(
         path: Routes.home,
         builder: (context, state) {
@@ -45,4 +55,22 @@ GoRouter get router {
       ),
     ],
   );
+}
+
+// From https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart
+Future<String?> _redirect(BuildContext context, GoRouterState state) async {
+  final isFirstTimeUser = await context
+      .read<UsageStatusRepository>()
+      .isFirstTimeUser;
+  final isEnteringApp = state.matchedLocation == Routes.onBoarding;
+
+  if (isFirstTimeUser) {
+    return Routes.onBoarding;
+  }
+
+  if (isEnteringApp) {
+    return Routes.home;
+  }
+
+  return null;
 }
