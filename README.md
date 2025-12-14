@@ -14,19 +14,4 @@ Through this project, I would like to implement the following principles
     3. [Command Design Pattern](https://softwarepatternslexicon.com/patterns-dart/6/3/)
 
 ## P L A N
-- Aim is to start with the DATA layer => Models, Repositories & Services
-[ ] Create the necessary object models for the app
-    [ ] Hymn 
-    [ ] Hymnal
-    [ ] Hymn Collection
-    [ ] Hymn Bookmark
-    
-[ ] Create & Implement Repositories
-    [ ] Hymn Repository
-    [ ] Hymnal Repository
-    [ ] Hymn Collection Repository
-    [ ] Hymn Bookmark Repository
-    
-[ ] Implement SQFLITE Database Functionality
-    [ ] Handle table creation
-    [ ] Methods to fetch & insert data
+[] Perform tests to the hymnal screen
