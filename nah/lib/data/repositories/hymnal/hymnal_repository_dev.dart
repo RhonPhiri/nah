@@ -24,10 +24,10 @@ class HymnalRepositoryDev implements HymnalRepository {
   }
 
   @override
-  Future<Result<int?>> getStoredHymnalId() async {
+  Future<Result<String?>> getStoredHymnal() async {
     try {
-      final result = await _prefs.fetchHymnalId();
-      if (result is Success<int?>) {
+      final result = await _prefs.fetchHymnal();
+      if (result is Success<String?>) {
         return Result.success(result.data);
       }
       return Result.error((result as Error).error);
@@ -37,9 +37,9 @@ class HymnalRepositoryDev implements HymnalRepository {
   }
 
   @override
-  Future<Result<void>> storeSelectedHymnalId(int hymnalId) async {
+  Future<Result<void>> storeSelectedHymnal(String hymnal) async {
     try {
-      await _prefs.saveHymnalId(hymnalId);
+      await _prefs.saveHymnal(hymnal);
       return Result.success(null);
     } on Exception catch (e) {
       return Result.error(Exception(e));
