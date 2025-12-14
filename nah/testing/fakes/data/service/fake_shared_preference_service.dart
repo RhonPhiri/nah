@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:nah/data/services/shared_pref_service.dart';
+import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:nah/utils/result.dart';
 
 class FakeSharedPreferenceService extends SharedPrefService {
@@ -6,13 +8,17 @@ class FakeSharedPreferenceService extends SharedPrefService {
   bool? usageStatus;
 
   @override
-  Future<Result<String?>> fetchHymnal() async {
-    return Result.success(hymnal);
+  Future<Result<Hymnal?>> fetchHymnal() async {
+    if (hymnal != null) {
+      return (Result.success(Hymnal.fromJson(jsonDecode(hymnal!))));
+    }
+    return Result.success(null);
   }
 
   @override
-  Future<Result<void>> saveHymnal(String hymnal) async {
-    this.hymnal = hymnal;
+  Future<Result<void>> saveHymnal(Hymnal hymnal) async {
+    final hymnalJson = jsonEncode(hymnal.toJson());
+    this.hymnal = hymnalJson;
     return Result.success(null);
   }
 
