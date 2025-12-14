@@ -61,18 +61,23 @@ class _HymnalScreenState extends State<HymnalScreen> {
                   itemCount: hymnals.length,
                   itemBuilder: (context, index) {
                     final hymnal = hymnals[index];
-                    return ListTile(
-                      key: ValueKey('hymnalListTile_$index'),
-                      leading: Icon(
-                        (widget.viewModel.selectedHymnal?.id == hymnal.id)
-                            ? Icons.book_rounded
-                            : Icons.book_outlined,
-                        size: 48,
+
+                    return Material(
+                      color: Theme.of(context).cardColor,
+                      clipBehavior: Clip.hardEdge,
+                      child: ListTile(
+                        key: ValueKey('hymnalListTile_$index'),
+                        leading: Icon(
+                          (widget.viewModel.selectedHymnal?.id == hymnal.id)
+                              ? Icons.book_rounded
+                              : Icons.book_outlined,
+                          size: 48,
+                        ),
+                        title: Text(hymnal.title),
+                        subtitle: Text(hymnal.language),
+                        onTap: () =>
+                            widget.viewModel.selectHymnal.execute(hymnal),
                       ),
-                      title: Text(hymnal.title),
-                      subtitle: Text(hymnal.language),
-                      onTap: () =>
-                          widget.viewModel.selectHymnal.execute(hymnal),
                     );
                   },
                 ),
@@ -87,7 +92,7 @@ class _HymnalScreenState extends State<HymnalScreen> {
   void _onHymnalSelected() async {
     if (widget.viewModel.selectHymnal.completed) {
       if (widget.isOnboarding) {
-        await context.read<UsageStatusRepository>().enterApp();
+        context.read<UsageStatusRepository>().enterApp();
         return;
       }
       widget.viewModel.selectHymnal.clearResult();
