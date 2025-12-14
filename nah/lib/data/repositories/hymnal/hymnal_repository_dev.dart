@@ -24,25 +24,20 @@ class HymnalRepositoryDev implements HymnalRepository {
   }
 
   @override
-  Future<Result<String?>> getStoredHymnal() async {
-    try {
-      final result = await _prefs.fetchHymnal();
-      if (result is Success<String?>) {
-        return Result.success(result.data);
-      }
-      return Result.error((result as Error).error);
-    } catch (e) {
-      return Result.error(Exception(e));
+  Future<Result<Hymnal?>> getStoredHymnal() async {
+    final result = await _prefs.fetchHymnal();
+    if (result is Success<Hymnal?>) {
+      return Result.success(result.data);
     }
+    return Result.error((result as Error<Hymnal?>).error);
   }
 
   @override
-  Future<Result<void>> storeSelectedHymnal(String hymnal) async {
-    try {
-      await _prefs.saveHymnal(hymnal);
+  Future<Result<void>> storeSelectedHymnal(Hymnal hymnal) async {
+    final result = await _prefs.saveHymnal(hymnal);
+    if (result is Success<void>) {
       return Result.success(null);
-    } on Exception catch (e) {
-      return Result.error(Exception(e));
     }
+    return Result.error((result as Error<void>).error);
   }
 }
