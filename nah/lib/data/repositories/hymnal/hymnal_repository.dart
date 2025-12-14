@@ -7,8 +7,8 @@ abstract class HymnalRepository {
   Future<Result<List<Hymnal>>> getHymnals();
 
   /// Method to store the selected hymnal
-  Future<Result<void>> storeSelectedHymnal(String hymnal);
+  Future<Result<void>> storeSelectedHymnal(Hymnal hymnal);
 
   /// Method to fetch the hymnal that was selected on last usage
-  Future<Result<String?>> getStoredHymnal();
+  Future<Result<Hymnal?>> getStoredHymnal();
 }
