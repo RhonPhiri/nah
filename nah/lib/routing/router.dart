@@ -38,6 +38,7 @@ GoRouter router(UsageStatusRepository usageStateRepo) {
             ],
           );
         },
+
         routes: [
           GoRoute(
             path: Routes.hymnals,
