@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nah/data/repositories/hymnal/hymnal_repository.dart';
 import 'package:nah/data/repositories/hymnal/hymnal_repository_dev.dart';
 import 'package:nah/data/services/data_service.dart';
 import 'package:nah/data/services/shared_pref_service.dart';
-import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:nah/utils/result.dart';
 import '../../../testing/fakes/data/service/fake_data_service.dart';
 import '../../../testing/fakes/data/service/fake_shared_preference_service.dart';
@@ -36,20 +33,19 @@ void main() {
     });
 
     test('should store the selected hymnal', () async {
-      final result = await hymnalRepository.storeSelectedHymnal(
-        jsonEncode(kHymnal.toJson()),
-      );
+      final result = await hymnalRepository.storeSelectedHymnal(kHymnal);
 
       expect(result, isA<Success>());
     });
 
     test('should get the previously stored hymnal id', () async {
+      await hymnalRepository.storeSelectedHymnal(kHymnal);
+
       final result = await hymnalRepository.getStoredHymnal();
 
       expect(result, isA<Success>());
 
-      final hymnal = Hymnal.fromJson(jsonDecode(result.asSuccess.data!));
-      expect(hymnal.id, kHymnal.id);
+      expect(result.asSuccess.data?.id, kHymnal.id);
     });
   });
 }
