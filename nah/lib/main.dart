@@ -17,14 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: router,
+      routerConfig: router(context.read()),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.light,
-          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+          seedColor: Colors.blueGrey,
         ),
       ),
       themeMode: ThemeMode.dark,
