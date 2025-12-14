@@ -13,30 +13,27 @@ class HymnalViewModel extends ChangeNotifier {
   HymnalViewModel({required HymnalRepository hymnalRepository})
     : _hymnalRepository = hymnalRepository {
     load = Command0<List<Hymnal>>(_load)..execute();
-    getHymnalId = Command0<int?>(_getStoredHymnalId)..execute();
-
-    selectHymnalId = Command1<void, int>(_selectHymnalId);
+    selectHymnal = Command1<void, Hymnal>(_selectHymnal);
   }
 
   List<Hymnal> _hymnals = [];
   List<Hymnal> get hymnals => _hymnals;
 
-  int? _selectedHymnalId;
-  int? get selectedHymnalId => _selectedHymnalId;
+  Hymnal? _selectedHymnal;
+  Hymnal? get selectedHymnal => _selectedHymnal;
 
   late final Command0 load;
-  late final Command0 getHymnalId;
-  late final Command1 selectHymnalId;
+  late final Command1 selectHymnal;
 
   Future<Result<List<Hymnal>>> _load() async {
     try {
       final result = await _hymnalRepository.getHymnals();
-      switch (result) {
-        case Success<List<Hymnal>>():
-          _hymnals = result.data;
-          _log.fine("Loaded hymnals");
-        case Error<List<Hymnal>>():
-          _log.warning("Failed to load hymnals", result.error);
+      if (result is Success<List<Hymnal>>) {
+        _hymnals = result.data;
+        _log.fine("Loaded hymnals");
+        await _getStoredHymnal();
+      } else if (result is Error<List<Hymnal>>) {
+        _log.warning("Failed to load hymnals", result.error);
       }
       return result;
     } finally {
@@ -44,35 +41,38 @@ class HymnalViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Result<int?>> _getStoredHymnalId() async {
+  Future<void> _getStoredHymnal() async {
     try {
-      final result = await _hymnalRepository.getStoredHymnalId();
+      final result = await _hymnalRepository.getStoredHymnal();
+
       switch (result) {
-        case Success<int?>():
+        case Success<Hymnal?>():
           if (result.data == null) {
-            _selectHymnalId(0);
+            _selectHymnal(hymnals.first);
             break;
           }
-          _selectedHymnalId = result.data;
-        case Error<int?>():
+          _selectedHymnal = result.data;
+        case Error<Hymnal?>():
           _log.warning("Failed to get the stored hymnal id", result.error);
       }
-      return result;
-    } finally {
-      notifyListeners();
+    } on Exception catch (e) {
+      _log.warning("Error getting the stored hymnal", e);
     }
   }
 
-  Future<Result<void>> _selectHymnalId(int hymnalId) async {
-    try {
-      _selectedHymnalId = hymnalId;
-      final result = await _hymnalRepository.storeSelectedHymnalId(hymnalId);
-      switch (result) {
-        case Success<void>():
-          _log.fine("Stored the current selected hymnal Id");
+  Future<Result<void>> _selectHymnal(Hymnal hymnal) async {
+    if (_selectedHymnal == hymnal) {
+      return Result.success(null);
+    }
 
-        case Error<void>():
-          _log.warning("Failed to store the current selected hymnal id");
+    _selectedHymnal = hymnal;
+
+    try {
+      final result = await _hymnalRepository.storeSelectedHymnal(hymnal);
+      if (result is Success<void>) {
+        _log.fine("Stored the current selected hymnal");
+      } else {
+        _log.warning("Failed to store the current selected hymnal");
       }
       return result;
     } finally {
@@ -83,10 +83,9 @@ class HymnalViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _hymnals.clear();
-    _selectedHymnalId = null;
+    _selectedHymnal = null;
     load.clearResult();
-    getHymnalId.clearResult();
-    selectHymnalId.clearResult();
+    selectHymnal.clearResult();
     super.dispose();
   }
 }
