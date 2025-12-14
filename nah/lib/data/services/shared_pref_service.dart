@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:logging/logging.dart';
+import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:nah/utils/result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,22 +12,30 @@ class SharedPrefService {
 
   static const _usageStatusKey = "USAGE";
 
-  Future<Result<String?>> fetchHymnal() async {
+  Future<Result<Hymnal?>> fetchHymnal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       _log.fine("Accessing shared preferences successful: getting hymnal");
-      return Result.success(prefs.getString(_hymnalKey));
+
+      final storedJson = prefs.getString(_hymnalKey);
+
+      if (storedJson != null) {
+        return Result.success(Hymnal.fromJson(jsonDecode(storedJson)));
+      }
+
+      return Result.success(null);
     } on Exception catch (e) {
       _log.warning("Failed to access the shared preferences to get hymnal", e);
       return Result.error(Exception(e));
     }
   }
 
-  Future<Result<void>> saveHymnal(String hymnal) async {
+  Future<Result<void>> saveHymnal(Hymnal hymnal) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       _log.fine("Accessing shared preferences successful: setting hymnal");
-      await prefs.setString(_hymnalKey, hymnal);
+      final json = jsonEncode(hymnal.toJson());
+      await prefs.setString(_hymnalKey, json);
       return Result.success(null);
     } on Exception catch (e) {
       _log.warning("Failed to save the current selected hymnal");
