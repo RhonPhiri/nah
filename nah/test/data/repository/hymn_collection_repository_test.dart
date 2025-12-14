@@ -12,7 +12,7 @@ void main() {
   group('HymnCollectionRepository Tests', () {
     late HymnCollectionRepository collectionRepository;
     setUpAll(() {
-      configureDevDependencies();
+      configureDependencies();
     });
 
     setUp(() {

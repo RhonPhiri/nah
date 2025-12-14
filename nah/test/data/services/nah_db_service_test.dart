@@ -6,7 +6,7 @@ import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../../../testing/fakes/domain/models/hymn_collection.dart';
+import '../../../testing/fakes/domain/models/hymn_collection.dart';
 
 Future<void> main() async {
   const hymnalLength = 5;
@@ -140,24 +140,7 @@ Future<void> main() async {
         whereArgs: [3, 2],
       );
 
-      final hymns = hymnMaps.map((map) {
-        return switch (map) {
-          {
-            "id": int id,
-            "title": String title,
-            "details": String details,
-            "lyrics": String lyrics,
-            "hymnalId": int hymnal_id,
-          } =>
-            Hymn(
-              id: id,
-              title: title,
-              details: jsonDecode(details) as Map<String, dynamic>,
-              lyrics: jsonDecode(lyrics) as Map<String, dynamic>,
-            ),
-          _ => throw const FormatException("Unrecognized Hymn Map"),
-        };
-      }).toList();
+      final hymns = hymnMaps.map(Hymn.fromJson).toList();
 
       expect(hymns.first, isA<Hymn>());
       expect(hymns.length, 1);

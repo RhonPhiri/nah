@@ -5,4 +5,10 @@ import 'package:nah/utils/result.dart';
 abstract class HymnalRepository {
   /// Method to get hymnals
   Future<Result<List<Hymnal>>> getHymnals();
+
+  /// Method to store the selected hymnal
+  Future<Result<void>> storeSelectedHymnal(Hymnal hymnal);
+
+  /// Method to fetch the hymnal that was selected on last usage
+  Future<Result<Hymnal?>> getStoredHymnal();
 }

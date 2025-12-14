@@ -13,3 +13,6 @@ Through this project, I would like to implement the following principles
     1. Clean Architecture [MVVM](https://docs.flutter.dev/app-architecture/guide)
     2. Dependency Injection; [Get_It](https://flutter-it.dev/documentation/get_it/getting_started)& [Provider](https://pub.dev/packages/provider)
     3. [Command Design Pattern](https://softwarepatternslexicon.com/patterns-dart/6/3/)
+
+## P L A N
+[] Perform tests to the hymnal screen

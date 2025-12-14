@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
@@ -17,17 +17,20 @@ import 'package:path/path.dart';
 class NahDbService implements DataService {
   final log = Logger("NAH_DB_SERVICE");
 
+  /// Variable to cache the database instance
   static Database? _database;
 
+  /// Getter to retain an instance of the database
   Future<Database> get database async {
     return _database ??= await _initDatabase();
   }
 
+  /// Method called during initial initialization of the database
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, nahDnName);
 
-    await _ensurePrebuiltDbCopied(path);
+    // await _ensurePrebuiltDbCopied(path);
 
     return await openDatabase(
       path,
@@ -37,25 +40,34 @@ class NahDbService implements DataService {
       onConfigure: _onConfigure,
 
       // This won't run if the DB already exists
-      onCreate: _onCreate,
+      onCreate: (db, version) => _onCreate(db, version, path),
 
       onOpen: _onOpen,
     );
   }
 
   // Method to run during database initialization; Copying the prebuilt database into the device
-  Future<void> _ensurePrebuiltDbCopied(String destPath) async {
-    // Path on the device obtained using the getFatabasesPath() method + join & loading it itno FILE()
-    final destFile = File(destPath);
-    // Stop the function if the file laredy exists
-    if (await destFile.exists()) return;
-    // Since flutter is now running, rootbundle can now be used and loaded inform of bytes
-    final data = await rootBundle.load('assets/nah_prebuilt.db');
-    final bytes = data.buffer.asUint8List();
-    // Recursive true; Creates the file and libraries if not created yet
-    await destFile.create(recursive: true);
-    await destFile.writeAsBytes(bytes, flush: true);
-  }
+  // Future<void> _ensurePrebuiltDbCopied(String destPath) async {
+  //   // Path on the device obtained using the getFatabasesPath() method + join & loading it itno FILE()
+  //   final destFile = File(destPath);
+  //   // Stop the function if the file laredy exists
+  //   if (await destFile.exists()) {
+  //     log.fine("NahDatabase already exists 👍");
+  //     return;
+  //   }
+
+  //   log.fine("Loading prebuit Nah Database 🔥");
+  //   // Since flutter is now running, rootbundle can now be used and loaded inform of bytes
+  //   try {
+  //     final data = await rootBundle.load(Assets.prebuiltDb);
+  //     final bytes = data.buffer.asUint8List();
+  //     // Recursive true; Creates the file and libraries if not created yet
+  //     await destFile.create(recursive: true);
+  //     await destFile.writeAsBytes(bytes, flush: true);
+  //   } on Exception catch (e) {
+  //     log.warning("Error loading the prebuilt NahDb", e);
+  //   }
+  // }
 
   /// Method to add support for cascade delete
   FutureOr<void> _onConfigure(Database db) async {
@@ -63,7 +75,8 @@ class NahDbService implements DataService {
   }
 
   /// Method to populate the database upon creation
-  FutureOr<void> _onCreate(Database db, int version) async {
+  FutureOr<void> _onCreate(Database db, int version, String path) async {
+    // if (await databaseExists(path)) return;
     db.execute('''
       CREATE TABLE hymnal (
         id INTEGER PRIMARY KEY,
@@ -109,7 +122,7 @@ class NahDbService implements DataService {
           ON DELETE CASCADE
       );
     ''');
-    await _insertData(db);
+    await _insertHymnalData(db);
 
     await db.execute(
       'CREATE INDEX idx_hymn_hymnal_id ON $tableHymn (hymnalId);',
@@ -119,13 +132,14 @@ class NahDbService implements DataService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _loadEmbeddedAsset(String asset) async {
-    final localData = await rootBundle.loadString(asset);
-    return (jsonDecode(localData) as List).cast<Map<String, dynamic>>();
+  List<Map<String, dynamic>> _parseJsonForCompute(String jsonData) {
+    return (jsonDecode(jsonData) as List).cast<Map<String, dynamic>>();
   }
 
-  Future<void> _insertData(Database db) async {
-    final hymnalMaps = await _loadEmbeddedAsset(Assets.hymnals);
+  Future<void> _insertHymnalData(Database db) async {
+    final hymnalJson = await rootBundle.loadString(Assets.hymnals);
+
+    final hymnalMaps = await compute(_parseJsonForCompute, hymnalJson);
 
     final hymnals = hymnalMaps.map(Hymnal.fromJson).toList();
 
@@ -151,25 +165,33 @@ class NahDbService implements DataService {
     required int hymnalId,
     required String language,
   }) async {
-    final hymnMaps = await _loadEmbeddedAsset("${Assets.hymns}$language.json");
+    try {
+      final hymnJson = await rootBundle.loadString(
+        "${Assets.hymns}${language.toLowerCase()}.json",
+      );
 
-    final hymns = hymnMaps.map(Hymn.fromJson).toList();
+      final hymnMaps = await compute(_parseJsonForCompute, hymnJson);
 
-    final batch = database.batch();
+      final hymns = hymnMaps.map(Hymn.fromJson).toList();
 
-    // Manual encoding
-    //
-    for (Hymn hymn in hymns) {
-      batch.insert(tableHymn, {
-        "id": hymn.id,
-        "title": hymn.title,
-        "details": jsonEncode(hymn.details),
-        "lyrics": jsonEncode(hymn.lyrics),
-        "hymnalId": hymnalId,
-      }, conflictAlgorithm: .replace);
+      final batch = database.batch();
+
+      // Manual encoding
+      //
+      for (Hymn hymn in hymns) {
+        batch.insert(tableHymn, {
+          "id": hymn.id,
+          "title": hymn.title,
+          "details": jsonEncode(hymn.details),
+          "lyrics": jsonEncode(hymn.lyrics),
+          "hymnalId": hymnalId,
+        }, conflictAlgorithm: .replace);
+      }
+
+      await batch.commit(noResult: true);
+    } on Exception catch (e) {
+      log.warning("Error inserting hymns into the dataabse", e);
     }
-
-    await batch.commit(noResult: true);
   }
 
   /// Method to print the version of the database
@@ -214,8 +236,27 @@ class NahDbService implements DataService {
       }
 
       // Haven't used the fromJson method provided by freezed because I have to decode the details & lyrics
-      // & cast them into Maps
-      final hymns = hymnMaps.map(Hymn.fromJson).toList();
+      // They were stored as Strings. Decoding will expose them as Maps
+      final hymns = hymnMaps
+          .map(
+            (map) => switch (map) {
+              {
+                "id": int id,
+                "title": String title,
+                "details": String details,
+                "lyrics": String lyrics,
+                "hymnalId": int hymnalId,
+              } =>
+                Hymn(
+                  id: id,
+                  title: title,
+                  details: jsonDecode(details),
+                  lyrics: jsonDecode(lyrics),
+                ),
+              _ => throw const FormatException("Unrecognized Hymn Format"),
+            },
+          )
+          .toList();
 
       return Result.success(hymns);
     } catch (e, stackTrace) {

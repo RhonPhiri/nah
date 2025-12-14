@@ -14,11 +14,11 @@ void main() {
     late HymnBookmarkRepository bookmarkRepository;
 
     setUpAll(() {
-      configureDevDependencies();
+      configureDependencies();
     });
 
     setUp(() {
-      // Create a new scope so tests can register test-specific singletons
+      // Create a new scope so tests can register test-specific singletons and hide any previous registrations (NAH_DB_SERVICE) of the same type [DataService]
       getIt.pushNewScope();
       // Register the fake as the active DataService for this scope
       getIt.registerSingleton<DataService>(FakeDataService());
