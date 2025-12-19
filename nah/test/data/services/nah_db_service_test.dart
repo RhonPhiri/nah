@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
+import 'package:nah/data/services/db/nah_db_utils.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
@@ -77,13 +77,18 @@ Future<void> main() async {
       batch.insert('hymnal', {'id': i, 'title': 'HYMNAL_$i', 'language': 'en'});
 
       for (var j = 1; j <= hymnLength; j++) {
-        batch.insert('hymn', {
-          'id': j,
-          'title': 'HYMN_$j',
-          'details': jsonEncode({'meta': 'm$j'}),
-          'lyrics': jsonEncode({'verse': 'v$j'}),
-          'hymnalId': i,
-        });
+        batch.insert(
+          'hymn',
+          hymnMapper(
+            Hymn(
+              id: j,
+              title: 'HYMN_$j',
+              details: {'meta': 'm$j'},
+              lyrics: {'verse': 'v$j'},
+            ),
+            i,
+          ),
+        );
       }
     }
 
@@ -128,7 +133,7 @@ Future<void> main() async {
         where: "hymnalId = ?",
         whereArgs: [1],
       );
-      final hymns = hymnMaps.map(Hymn.fromJson).toList();
+      final hymns = hymnMaps.map(hymnFromMap).toList();
 
       expect(hymns.first, isA<Hymn>());
       expect(hymns.length, hymnLength);
@@ -140,7 +145,7 @@ Future<void> main() async {
         whereArgs: [3, 2],
       );
 
-      final hymns = hymnMaps.map(Hymn.fromJson).toList();
+      final hymns = hymnMaps.map(hymnFromMap).toList();
 
       expect(hymns.first, isA<Hymn>());
       expect(hymns.length, 1);
