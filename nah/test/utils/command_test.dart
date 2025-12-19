@@ -5,7 +5,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nah/utils/command.dart';
 import 'package:nah/utils/result.dart';
-
 import '../../testing/utils/result.dart';
 
 void main() {
