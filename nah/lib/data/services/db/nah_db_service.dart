@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:nah/config/assets.dart';
 import 'package:nah/data/services/data_service.dart';
 import 'package:nah/data/services/db/nah_db_parameters.dart';
+import 'package:nah/data/services/db/nah_db_utils.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymn_bookmark/hymn_bookmark.dart';
 import 'package:nah/domain/models/hymn_collection/hymn_collection.dart';
@@ -179,13 +180,11 @@ class NahDbService implements DataService {
       // Manual encoding
       //
       for (Hymn hymn in hymns) {
-        batch.insert(tableHymn, {
-          "id": hymn.id,
-          "title": hymn.title,
-          "details": jsonEncode(hymn.details),
-          "lyrics": jsonEncode(hymn.lyrics),
-          "hymnalId": hymnalId,
-        }, conflictAlgorithm: .replace);
+        batch.insert(
+          tableHymn,
+          hymnMapper(hymn, hymnalId),
+          conflictAlgorithm: .replace,
+        );
       }
 
       await batch.commit(noResult: true);
@@ -237,26 +236,7 @@ class NahDbService implements DataService {
 
       // Haven't used the fromJson method provided by freezed because I have to decode the details & lyrics
       // They were stored as Strings. Decoding will expose them as Maps
-      final hymns = hymnMaps
-          .map(
-            (map) => switch (map) {
-              {
-                "id": int id,
-                "title": String title,
-                "details": String details,
-                "lyrics": String lyrics,
-                "hymnalId": int hymnalId,
-              } =>
-                Hymn(
-                  id: id,
-                  title: title,
-                  details: jsonDecode(details),
-                  lyrics: jsonDecode(lyrics),
-                ),
-              _ => throw const FormatException("Unrecognized Hymn Format"),
-            },
-          )
-          .toList();
+      final hymns = hymnMaps.map(hymnFromMap).toList();
 
       return Result.success(hymns);
     } catch (e, stackTrace) {
