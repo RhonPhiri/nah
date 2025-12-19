@@ -13,10 +13,6 @@ void main() {
   group('HymnBookmarkRepository tests', () {
     late HymnBookmarkRepository bookmarkRepository;
 
-    setUpAll(() {
-      configureDependencies();
-    });
-
     setUp(() {
       // Create a new scope so tests can register test-specific singletons and hide any previous registrations (NAH_DB_SERVICE) of the same type [DataService]
       getIt.pushNewScope();

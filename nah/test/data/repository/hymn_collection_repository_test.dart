@@ -11,9 +11,6 @@ import '../../../testing/utils/result.dart';
 void main() {
   group('HymnCollectionRepository Tests', () {
     late HymnCollectionRepository collectionRepository;
-    setUpAll(() {
-      configureDependencies();
-    });
 
     setUp(() {
       // Create a new scope so tests can register test-specific singletons
