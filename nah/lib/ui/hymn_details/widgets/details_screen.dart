@@ -1,83 +1,152 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
-import 'package:nah/ui/core/ui/my_sliver_app_bar.dart';
 import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
 
-class DetailsScreen extends StatefulWidget {
-  const DetailsScreen({
-    super.key,
-    required this.hymnId,
-    required this.viewModel,
-  });
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key, required this.viewModel});
 
-  final int hymnId;
   final HymnViewModel viewModel;
   @override
-  State<DetailsScreen> createState() => _DetailsScreenState();
-}
-
-class _DetailsScreenState extends State<DetailsScreen> {
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: widget.hymnId - 1);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final hymns = widget.viewModel.hymns;
     return PopScope(
       canPop: true,
-
+      onPopInvokedWithResult: (didPop, result) {
+        viewModel.setSelectedHymn(null);
+      },
       child: Scaffold(
-        body: PageView.builder(
-          controller: _pageController,
-          itemCount: hymns.length,
-          itemBuilder: (context, index) {
-            final hymn = hymns[index];
-            return HymnColumn(hymn: hymn);
-          },
-        ),
+        appBar: AppBar(),
+        body: HymnColumn(viewModel: viewModel),
       ),
     );
   }
 }
 
-class HymnColumn extends StatelessWidget {
-  const HymnColumn({super.key, required this.hymn});
+class HymnColumn extends StatefulWidget {
+  const HymnColumn({super.key, required this.viewModel});
+  final HymnViewModel viewModel;
 
-  final Hymn hymn;
+  @override
+  State<HymnColumn> createState() => _HymnColumnState();
+}
+
+class _HymnColumnState extends State<HymnColumn> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    final hymns = widget.viewModel.hymns;
+    final selected = widget.viewModel.selectedHymn;
+    final initialIdx = (selected == null)
+        ? 0
+        : (hymns.indexWhere((h) => h.id == selected.id));
+
+    _pageController = PageController(initialPage: initialIdx);
+
+    widget.viewModel.selectedHymnNotifier.addListener(_onSelectedHymnChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.selectedHymnNotifier.removeListener(
+      _onSelectedHymnChanged,
+    );
+
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        MySliverAppBar(title: hymnTitle),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SelectableRegion(
-              selectionControls: MaterialTextSelectionControls()
-                ..buildHandle(context, TextSelectionHandleType.collapsed, 16),
-              child: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  _englishHymnal,
+    final hymns = widget.viewModel.hymns;
 
-                  _englishTitle,
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: hymns.length,
+        onPageChanged: (index) {
+          widget.viewModel.setSelectedHymn(hymns[index]);
+        },
+        itemBuilder: (context, index) {
+          final hymn = hymns[index];
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SelectableRegion(
+                selectionControls: MaterialTextSelectionControls()
+                  ..buildHandle(context, TextSelectionHandleType.collapsed, 16),
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    hymnTitle(hymn),
 
-                  Divider(thickness: 0),
+                    _englishHymnal(hymn),
 
-                  ..._lyricsBuilder,
+                    _englishTitle(hymn),
 
-                  const SizedBox(height: 16),
+                    Divider(thickness: 0),
 
-                  Center(child: _composer),
-                ],
+                    ..._lyricsBuilder(hymn),
+
+                    const SizedBox(height: 16),
+
+                    Center(child: _composer(hymn)),
+                  ],
+                ),
               ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _onSelectedHymnChanged() {
+    final selected = widget.viewModel.selectedHymn;
+
+    /// If a user hasn't tapped on a hymn
+    if (selected == null || !mounted || !_pageController.hasClients) return;
+
+    final hymns = widget.viewModel.hymns;
+    final idx = hymns.indexWhere((h) => h.id == selected.id);
+
+    // TODO: Analyze
+    if (idx != -1 &&
+        (_pageController.page?.round() ?? _pageController.initialPage) != idx) {
+      _pageController.animateToPage(
+        idx,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  Widget hymnTitle(Hymn hymn) {
+    return Row(
+      crossAxisAlignment: .start,
+      mainAxisSize: .max,
+      children: [
+        Text(
+          "${hymn.id}.",
+          maxLines: 3,
+          style: const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            hymn.title,
+            maxLines: 3,
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -85,9 +154,7 @@ class HymnColumn extends StatelessWidget {
     );
   }
 
-  String get hymnTitle => "${hymn.id}. ${hymn.title}";
-
-  List<Widget> get _lyricsBuilder {
+  List<Widget> _lyricsBuilder(Hymn hymn) {
     return switch (hymn.lyrics) {
       {"verses": final verses, "chorus": final chorus} => [
         if (chorus.isNotEmpty) ...[
@@ -134,7 +201,7 @@ class HymnColumn extends StatelessWidget {
     };
   }
 
-  Widget get _englishHymnal {
+  Widget _englishHymnal(Hymn hymn) {
     final data = hymn.details["englishHymnal"];
     return data != null
         ? Text(
@@ -148,7 +215,7 @@ class HymnColumn extends StatelessWidget {
         : SizedBox.shrink();
   }
 
-  Widget get _englishTitle {
+  Widget _englishTitle(Hymn hymn) {
     final data = hymn.details["englishTitle"];
     return data != null
         ? SelectableText(
@@ -162,7 +229,7 @@ class HymnColumn extends StatelessWidget {
         : SizedBox.shrink();
   }
 
-  Widget get _composer {
+  Widget _composer(Hymn hymn) {
     final data = hymn.details["composer"];
     return data != null
         ? SelectableText(
