@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:nah/routing/routes.dart';
 
 class ErrorButton extends StatelessWidget {
-  const ErrorButton({super.key, required this.text});
+  const ErrorButton({super.key, required this.text, required this.onPressed});
   final String text;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class ErrorButton extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           FilledButton(
-            onPressed: () => context.go(Routes.home),
+            onPressed: onPressed,
             style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.red),
               foregroundColor: WidgetStatePropertyAll(Colors.white),
