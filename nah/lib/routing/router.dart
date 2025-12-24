@@ -1,77 +1,110 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nah/data/repositories/usage_status_repository.dart/usage_status_repository.dart';
-import 'package:nah/routing/routes.dart';
+import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/ui/about/widgets/about_page.dart';
-import 'package:nah/ui/home/widgets/home_screen.dart';
+import 'package:nah/ui/home/widgets/home_shell.dart';
 import 'package:nah/ui/hymn_collections/widgets/hymn_collection_page.dart';
 import 'package:nah/ui/hymn_details/widgets/details_screen.dart';
+import 'package:nah/ui/hymnals/viewmodel/hymnal_view_model.dart';
 import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
+import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
 import 'package:nah/ui/hymns/widgets/hymn_page.dart';
 import 'package:provider/provider.dart';
 
-GoRouter router(UsageStatusRepository usageStateRepo) {
-  return GoRouter(
-    initialLocation: Routes.home,
-    redirect: _redirect,
-    refreshListenable: usageStateRepo,
-    debugLogDiagnostics: true,
-    routes: [
-      GoRoute(
-        path: Routes.onBoarding,
-        builder: (context, state) {
-          return HymnalScreen(viewModel: context.read(), isOnboarding: true);
-        },
-      ),
-      GoRoute(
-        path: Routes.home,
-        builder: (context, state) {
-          return HomeScreen(
-            viewModel: context.read(),
-            pages: [
-              HymnPage(
-                secondScreen: DetailsScreen(),
-                thirdScreen: HymnalScreen(viewModel: context.read()),
-              ),
-              HymnCollectionPage(),
-              AboutPage(),
-            ],
-          );
-        },
+typedef HymnAndViewModel = ({Hymn hymn, HymnViewModel viewModel});
 
-        routes: [
-          GoRoute(
-            path: Routes.hymnals,
-            builder: (context, state) {
-              return HymnalScreen(viewModel: context.read());
-            },
-          ),
-          GoRoute(
-            path: Routes.details,
-            builder: (context, state) {
-              return DetailsScreen();
-            },
-          ),
-        ],
-      ),
-    ],
-  );
-}
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: "root",
+);
 
-// From https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart
-Future<String?> _redirect(BuildContext context, GoRouterState state) async {
-  final isFirstTimeUser = await context
-      .read<UsageStatusRepository>()
-      .isFirstTimeUser;
-  final isEnteringApp = state.matchedLocation == Routes.onBoarding;
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: "sectionANav");
 
-  if (isFirstTimeUser) {
-    return Routes.onBoarding;
-  }
+final GoRouter router = GoRouter(
+  debugLogDiagnostics: true,
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: "/",
+  routes: <RouteBase>[
+    StatefulShellRoute(
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/hymns",
+              builder: (context, state) {
+                return HymnPage(viewModel: context.read());
+              },
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: "hymnals",
+                  pageBuilder: (context, state) {
+                    final viewmodel = HymnalViewModel(
+                      hymnalRepository: context.read(),
+                    );
+                    return CustomTransitionPage(
+                      child: HymnalScreen(viewModel: viewmodel),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOutCirc,
+                              ),
+                              child: child,
+                            );
+                          },
+                      transitionDuration: Duration(milliseconds: 560),
+                      reverseTransitionDuration: Duration(milliseconds: 560),
+                    );
+                  },
+                ),
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: "details/:id",
+                  builder: (context, state) {
+                    final id = int.parse(state.pathParameters["id"] ?? "1");
+                    return DetailsScreen(hymnId: id, viewModel: context.read());
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/hymn_collections",
+              builder: (context, state) {
+                return HymnCollectionPage();
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/about",
+              builder: (context, state) {
+                return AboutPage();
+              },
+            ),
+          ],
+        ),
+      ],
 
-  if (isEnteringApp) {
-    return Routes.home;
-  }
+      /// Intending to build a custom navigation shell container with a pageview
+      navigatorContainerBuilder: (context, navigationShell, children) {
+        return HomeShell(navigationShell: navigationShell, children: children);
+      },
 
-  return null;
-}
+      /// Returning the whole navigation shell which has been prebuilt
+      builder: (context, state, navigationShell) {
+        return navigationShell;
+      },
+    ),
+
+    /// Redirect to the hymn screen upon
+    GoRoute(path: "/", redirect: (context, state) => "/hymns"),
+  ],
+);
