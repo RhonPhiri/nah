@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nah/data/repositories/hymn/hymn_repository.dart';
@@ -10,12 +12,19 @@ import 'package:nah/data/services/shared_pref_service.dart';
 import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// Instantiating the get_it package
 final getIt = GetIt.instance;
 
 /// Method configuring services using get_it
 Future<void> configureDependencies() async {
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+
+    databaseFactory = databaseFactoryFfi;
+  }
+
   // Registering the database using the lazy singleton soo that it is only instantiated once
   getIt.registerSingletonAsync<DataService>(
     () async {
