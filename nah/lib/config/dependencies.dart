@@ -1,14 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nah/data/repositories/hymn/hymn_repository.dart';
+import 'package:nah/data/repositories/hymn/hymn_repository_dev.dart';
 import 'package:nah/data/repositories/hymnal/hymnal_repository.dart';
 import 'package:nah/data/repositories/hymnal/hymnal_repository_dev.dart';
-import 'package:nah/data/repositories/usage_status_repository.dart/usage_status_repository.dart';
-import 'package:nah/data/repositories/usage_status_repository.dart/usage_status_repository_dev.dart';
 import 'package:nah/data/services/data_service.dart';
 import 'package:nah/data/services/db/nah_db_service.dart';
 import 'package:nah/data/services/shared_pref_service.dart';
-import 'package:nah/ui/home/view_model/home_view_model.dart';
-import 'package:nah/ui/hymnals/view_model/hymnal_view_model.dart';
+import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -41,11 +40,6 @@ Future<void> configureDependencies() async {
 List<SingleChildWidget> get providers {
   return [
     // Repositories
-    ChangeNotifierProvider<UsageStatusRepository>(
-      create: (context) => UsageStatusRepositoryDev(
-        sharedPrefService: getIt<SharedPrefService>(),
-      ),
-    ),
     Provider<HymnalRepository>(
       create: (context) => HymnalRepositoryDev(
         dataService: getIt<DataService>(),
@@ -53,11 +47,15 @@ List<SingleChildWidget> get providers {
       ),
     ),
 
-    // Viewmodels
-    ChangeNotifierProvider(create: (context) => HomeViewModel()),
+    Provider<HymnRepository>(
+      create: (context) => HymnRepositoryDev(dataService: getIt<DataService>()),
+    ),
 
     ChangeNotifierProvider(
-      create: (context) => HymnalViewModel(hymnalRepository: context.read()),
+      create: (context) => HymnViewModel(
+        hymnRepository: context.read(),
+        hymnalRepository: context.read(),
+      ),
     ),
   ];
 }
