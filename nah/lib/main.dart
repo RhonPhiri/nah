@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:nah/config/dependencies.dart';
 import 'package:nah/routing/router.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
+  Logger.root.level = Level.ALL;
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize the Db & the Shared Preferences
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: router(context.read()),
+      routerConfig: router,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
       ),
