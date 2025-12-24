@@ -61,10 +61,9 @@ final GoRouter router = GoRouter(
                 ),
                 GoRoute(
                   parentNavigatorKey: _rootNavigatorKey,
-                  path: "details/:id",
+                  path: "details",
                   builder: (context, state) {
-                    final id = int.parse(state.pathParameters["id"] ?? "1");
-                    return DetailsScreen(hymnId: id, viewModel: context.read());
+                    return DetailsScreen(viewModel: context.read());
                   },
                 ),
               ],
