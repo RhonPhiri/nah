@@ -9,6 +9,7 @@ import 'package:nah/data/repositories/hymnal/hymnal_repository_dev.dart';
 import 'package:nah/data/services/data_service.dart';
 import 'package:nah/data/services/db/nah_db_service.dart';
 import 'package:nah/data/services/shared_pref_service.dart';
+import 'package:nah/ui/hymnals/viewmodel/hymnal_view_model.dart';
 import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -60,6 +61,10 @@ List<SingleChildWidget> get providers {
       create: (context) => HymnRepositoryDev(dataService: getIt<DataService>()),
     ),
 
+    // Viewmodels
+    ChangeNotifierProvider(
+      create: (context) => HymnalViewModel(hymnalRepository: context.read()),
+    ),
     ChangeNotifierProvider(
       create: (context) => HymnViewModel(
         hymnRepository: context.read(),
