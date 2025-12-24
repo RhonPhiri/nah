@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nah/ui/core/theme/dimens.dart';
 
+/// This is where the ui for the navigation is being handled
 class HomeShell extends StatefulWidget {
   const HomeShell({
     super.key,
@@ -10,13 +11,13 @@ class HomeShell extends StatefulWidget {
   });
   final StatefulNavigationShell navigationShell;
   final List<Widget> children;
-  // final List<Widget> pages;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
+  /// Using page view to allow user to swipe through the screens in the root
   late final PageController _pageController;
 
   @override
@@ -49,50 +50,52 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Variable representing large and XtraLarge Screens
     final isLargeScreen =
         Dimens(context).isLarge || Dimens(context).isExtraLarge;
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: isLargeScreen
+        body:
+            !Dimens(context)
+                .isCompact // For all screens that are not compact, show a navrail
             ? Row(
                 children: [
-                  !Dimens(context).isCompact
-                      ? NavigationRail(
-                          groupAlignment: -0.85,
-                          extended: isLargeScreen,
+                  NavigationRail(
+                    key: ValueKey("HOMESHELL_NAV_RAIL"),
+                    // TODO: Selected and label texttheme
+                    groupAlignment: -0.85,
+                    extended:
+                        isLargeScreen, // Show extended type for larger screens
+                    minExtendedWidth: 160,
 
-                          minExtendedWidth: 160,
-                          labelType: !isLargeScreen
-                              ? NavigationRailLabelType.selected
-                              : NavigationRailLabelType.none,
+                    labelType: !isLargeScreen
+                        ? NavigationRailLabelType.selected
+                        : NavigationRailLabelType.none,
+                    destinations: [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.library_music_outlined),
+                        selectedIcon: Icon(Icons.library_music),
 
-                          destinations: [
-                            NavigationRailDestination(
-                              icon: Icon(Icons.library_music_outlined),
-                              selectedIcon: Icon(Icons.library_music),
+                        label: Text("Hymns"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.collections_bookmark_outlined),
+                        selectedIcon: Icon(Icons.collections_bookmark_rounded),
 
-                              label: Text("Hymns"),
-                            ),
-                            NavigationRailDestination(
-                              icon: Icon(Icons.collections_bookmark_outlined),
-                              selectedIcon: Icon(
-                                Icons.collections_bookmark_rounded,
-                              ),
+                        label: Text("Collections"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.info_outline_rounded),
+                        selectedIcon: Icon(Icons.info_rounded),
 
-                              label: Text("Collections"),
-                            ),
-                            NavigationRailDestination(
-                              icon: Icon(Icons.info_outline_rounded),
-                              selectedIcon: Icon(Icons.info_rounded),
-
-                              label: Text("Info"),
-                            ),
-                          ],
-                          selectedIndex: widget.navigationShell.currentIndex,
-                          onDestinationSelected: _onDestinationSelected,
-                        )
-                      : SizedBox.shrink(),
+                        label: Text("Info"),
+                      ),
+                    ],
+                    selectedIndex: widget.navigationShell.currentIndex,
+                    onDestinationSelected: _onDestinationSelected,
+                  ),
+                  VerticalDivider(),
                   Flexible(
                     child: PageView(
                       controller: _pageController,
