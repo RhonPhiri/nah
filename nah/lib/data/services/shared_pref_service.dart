@@ -15,17 +15,21 @@ class SharedPrefService {
   Future<Result<Hymnal?>> fetchHymnal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      _log.fine("Accessing shared preferences successful: getting hymnal");
 
       final storedJson = prefs.getString(_hymnalKey);
 
       if (storedJson != null) {
+        _log.fine("Accessing shared preferences successful: getting hymnal");
+
         return Result.success(Hymnal.fromJson(jsonDecode(storedJson)));
       }
+      _log.warning("Failed to access the shared preferences to get hymnal");
 
-      return Result.success(null);
+      return Result.error(
+        Exception("Failed to access the shared preferences to get hymnal"),
+      );
     } on Exception catch (e) {
-      _log.warning("Failed to access the shared preferences to get hymnal", e);
+      _log.warning("Error fetching stored hymnal from shared preferences", e);
       return Result.error(Exception(e));
     }
   }
