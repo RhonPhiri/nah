@@ -8,7 +8,6 @@ Future<void> main() async {
   Logger.root.level = Level.ALL;
 
   WidgetsFlutterBinding.ensureInitialized();
-
   // Initialize the Db & the Shared Preferences
   await configureDependencies();
   runApp(MultiProvider(providers: providers, child: const MyApp()));
