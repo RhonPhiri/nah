@@ -23,18 +23,15 @@ class HymnViewModel extends ChangeNotifier {
 
   Hymnal? _hymnal;
 
-  // late Hymn _selectedHymn;
-
   List<Hymn> _hymns = [];
 
   Hymnal? get hymnal => _hymnal;
-
-  // Hymn get selectedHymn => _selectedHymn;
 
   List<Hymn> get hymns => List.unmodifiable(_hymns);
 
   late final Command0 load;
 
+  /// This method is called when the hymnal screen is popped, causing the rebuilding of the hymnpage
   void setSelectedHymnal(Hymnal? selectedHymnal) {
     if (_hymnal != selectedHymnal) {
       _hymnal = selectedHymnal;
@@ -42,15 +39,10 @@ class HymnViewModel extends ChangeNotifier {
     }
   }
 
-  // void setSelectedHymn(Hymn hymn) {
-  //   if (_selectedHymn != hymn) {
-  //     _selectedHymn = hymn;
-  //     notifyListeners();
-  //   }
-  // }
-
+  /// Method to load the hymns from database
   Future<Result<List<Hymn>>> _load() async {
     try {
+      // First, fetch the stored hymnal or assign the first hymnal to be the one selected
       final hymnalResult = await _hymnalRepository.getStoredHymnal();
       switch (hymnalResult) {
         case Success<Hymnal?>():
@@ -58,6 +50,9 @@ class HymnViewModel extends ChangeNotifier {
           _hymnal = hymnalResult.data;
         case Error<Hymnal?>():
           _log.warning("Error on loading stored hymnal", hymnalResult.error);
+
+          // If error on getting the stored hymnal, likely due to being the first time the user runs the app
+          // fetch hymnals and assign the first
           final hymnalsResult = await _hymnalRepository.getHymnals();
           switch (hymnalsResult) {
             case Success<List<Hymnal>>():
