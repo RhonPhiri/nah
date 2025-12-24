@@ -25,9 +25,13 @@ class HymnViewModel extends ChangeNotifier {
 
   List<Hymn> _hymns = [];
 
+  final ValueNotifier<Hymn?> selectedHymnNotifier = ValueNotifier(null);
+
   Hymnal? get hymnal => _hymnal;
 
   List<Hymn> get hymns => List.unmodifiable(_hymns);
+
+  Hymn? get selectedHymn => selectedHymnNotifier.value;
 
   late final Command0 load;
 
@@ -36,6 +40,12 @@ class HymnViewModel extends ChangeNotifier {
     if (_hymnal != selectedHymnal) {
       _hymnal = selectedHymnal;
       notifyListeners();
+    }
+  }
+
+  void setSelectedHymn(Hymn? hymn) {
+    if (selectedHymnNotifier.value != hymn) {
+      selectedHymnNotifier.value = hymn;
     }
   }
 
