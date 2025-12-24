@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/domain/models/hymnal/hymnal.dart';
-import 'package:nah/routing/router.dart';
-import 'package:nah/routing/routes.dart';
 import 'package:nah/ui/core/theme/dimens.dart';
 import 'package:nah/ui/core/ui/error_button.dart';
 import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
@@ -107,8 +104,8 @@ class _HymnPageState extends State<HymnPage> {
                             ),
                             title: Text(hymn.title),
                             onTap: () {
-                              // widget.viewModel.setSelectedHymn(hymn);
-                              context.push("/hymns/details/${hymn.id}");
+                              widget.viewModel.setSelectedHymn(hymn);
+                              context.push("/hymns/details");
                             },
                           );
                         },
