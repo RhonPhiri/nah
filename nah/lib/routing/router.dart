@@ -22,8 +22,11 @@ final GlobalKey<NavigatorState> _sectionANavigatorKey =
 
 final GoRouter router = GoRouter(
   debugLogDiagnostics: true,
+
   navigatorKey: _rootNavigatorKey,
+
   initialLocation: "/",
+
   routes: <RouteBase>[
     StatefulShellRoute(
       branches: [
@@ -32,18 +35,19 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: "/hymns",
               builder: (context, state) {
-                return HymnPage(viewModel: context.read());
+                return HymnPage(
+                  viewModel: context.read(),
+                  secondScreen: DetailsScreen(viewModel: context.read()),
+                  thirdScreen: HymnalScreen(viewModel: context.read()),
+                );
               },
               routes: [
                 GoRoute(
                   parentNavigatorKey: _rootNavigatorKey,
                   path: "hymnals",
                   pageBuilder: (context, state) {
-                    final viewmodel = HymnalViewModel(
-                      hymnalRepository: context.read(),
-                    );
                     return CustomTransitionPage(
-                      child: HymnalScreen(viewModel: viewmodel),
+                      child: HymnalScreen(viewModel: context.read()),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                             return FadeTransition(
