@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nah/ui/core/theme/dimens.dart';
 import 'package:nah/ui/core/ui/error_button.dart';
-import 'package:nah/ui/hymnals/viewmodel/hymnal_view_model.dart';
+import 'package:nah/ui/hymnal/viewmodel/hymnal_view_model.dart';
 
 class HymnalScreen extends StatefulWidget {
   const HymnalScreen({super.key, required this.viewModel});
@@ -15,19 +16,22 @@ class _HymnalScreenState extends State<HymnalScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.selectHymnal.addListener(_onHymnalSelected);
+    widget.viewModel.selectedHymnal.addListener(_onHymnalSelected);
   }
 
   @override
   void dispose() {
-    widget.viewModel.selectHymnal.removeListener(_onHymnalSelected);
+    widget.viewModel.selectedHymnal.removeListener(_onHymnalSelected);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: !Dimens(context).isExtraLarge,
+      onPopInvokedWithResult: (didPop, result) {
+        // if (didPop) return result;
+      },
       child: Scaffold(
         body: ListenableBuilder(
           listenable: widget.viewModel.load,
@@ -44,7 +48,7 @@ class _HymnalScreenState extends State<HymnalScreen> {
             return child!;
           },
           child: ListenableBuilder(
-            listenable: widget.viewModel,
+            listenable: widget.viewModel.selectedHymnal,
             builder: (context, _) {
               final hymnals = widget.viewModel.hymnals;
               return CustomScrollView(
@@ -62,7 +66,8 @@ class _HymnalScreenState extends State<HymnalScreen> {
                           key: ValueKey('hymnalListTile_$index'),
                           splashColor: Colors.transparent,
                           leading: Icon(
-                            (widget.viewModel.selectedHymnal?.id == hymnal.id)
+                            (widget.viewModel.selectedHymnal.value?.id ==
+                                    hymnal.id)
                                 ? Icons.book_rounded
                                 : Icons.book_outlined,
                             size: 48,
@@ -70,7 +75,7 @@ class _HymnalScreenState extends State<HymnalScreen> {
                           title: Text(hymnal.title),
                           subtitle: Text(hymnal.language),
                           onTap: () =>
-                              widget.viewModel.selectHymnal.execute(hymnal),
+                              widget.viewModel.selectedHymnal.value = hymnal,
                         ),
                       );
                     },
@@ -85,9 +90,6 @@ class _HymnalScreenState extends State<HymnalScreen> {
   }
 
   void _onHymnalSelected() async {
-    if (widget.viewModel.selectHymnal.completed) {
-      widget.viewModel.selectHymnal.clearResult();
-      if (mounted) context.pop(widget.viewModel.selectedHymnal);
-    }
+    if (mounted) print("Pop hymnal screen");
   }
 }

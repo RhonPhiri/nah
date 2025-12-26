@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
 import 'package:nah/ui/about/widgets/about_page.dart';
 import 'package:nah/ui/home/widgets/home_shell.dart';
-import 'package:nah/ui/hymn_collections/widgets/hymn_collection_page.dart';
+import 'package:nah/ui/hymn_collection/widgets/hymn_collection_page.dart';
 import 'package:nah/ui/hymn_details/widgets/details_screen.dart';
-import 'package:nah/ui/hymnals/viewmodel/hymnal_view_model.dart';
-import 'package:nah/ui/hymnals/widgets/hymnal_screen.dart';
-import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
-import 'package:nah/ui/hymns/widgets/hymn_page.dart';
+import 'package:nah/ui/hymnal/viewmodel/hymnal_view_model.dart';
+import 'package:nah/ui/hymnal/widgets/hymnal_screen.dart';
+import 'package:nah/ui/hymn/viewmodel/hymn_view_model.dart';
+import 'package:nah/ui/hymn/widgets/hymn_page.dart';
 import 'package:provider/provider.dart';
 
 typedef HymnAndViewModel = ({Hymn hymn, HymnViewModel viewModel});
@@ -28,6 +28,26 @@ final GoRouter router = GoRouter(
   initialLocation: "/",
 
   routes: <RouteBase>[
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: "/hymnals",
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          child: HymnalScreen(viewModel: context.read()),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeInOutCirc,
+              ),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 560),
+          reverseTransitionDuration: Duration(milliseconds: 560),
+        );
+      },
+    ),
     StatefulShellRoute(
       branches: [
         StatefulShellBranch(
@@ -42,27 +62,6 @@ final GoRouter router = GoRouter(
                 );
               },
               routes: [
-                GoRoute(
-                  parentNavigatorKey: _rootNavigatorKey,
-                  path: "hymnals",
-                  pageBuilder: (context, state) {
-                    return CustomTransitionPage(
-                      child: HymnalScreen(viewModel: context.read()),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOutCirc,
-                              ),
-                              child: child,
-                            );
-                          },
-                      transitionDuration: Duration(milliseconds: 560),
-                      reverseTransitionDuration: Duration(milliseconds: 560),
-                    );
-                  },
-                ),
                 GoRoute(
                   parentNavigatorKey: _rootNavigatorKey,
                   path: "details",
@@ -108,6 +107,6 @@ final GoRouter router = GoRouter(
     ),
 
     /// Redirect to the hymn screen upon
-    GoRoute(path: "/", redirect: (context, state) => "/hymns"),
+    GoRoute(path: "/", redirect: (context, state) => "/hymnals"),
   ],
 );

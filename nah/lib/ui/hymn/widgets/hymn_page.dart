@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nah/domain/models/hymnal/hymnal.dart';
 import 'package:nah/ui/core/theme/dimens.dart';
 import 'package:nah/ui/core/ui/error_button.dart';
-import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
+import 'package:nah/ui/hymn/viewmodel/hymn_view_model.dart';
 
 class HymnPage extends StatefulWidget {
   const HymnPage({
     super.key,
     required this.viewModel,
-    // required this.secondScreen,
-    // required this.thirdScreen,
+    required this.secondScreen,
+    required this.thirdScreen,
   });
   final HymnViewModel viewModel;
-  // final Widget secondScreen;
-  // final Widget thirdScreen;
+  final Widget secondScreen;
+  final Widget thirdScreen;
 
   @override
   State<HymnPage> createState() => _HymnPageState();
@@ -73,22 +72,10 @@ class _HymnPageState extends State<HymnPage> {
                             icon: Icon(Icons.search),
                           ),
 
-                          !Dimens(context).isExtraLarge
-                              ? IconButton(
-                                  onPressed: () async {
-                                    final newHymanl = await context.push(
-                                      "/hymns/hymnals",
-                                    );
-
-                                    if (newHymanl != null) {
-                                      widget.viewModel.setSelectedHymnal(
-                                        newHymanl as Hymnal,
-                                      );
-                                    }
-                                  },
-                                  icon: Icon(Icons.auto_stories),
-                                )
-                              : SizedBox.shrink(),
+                          IconButton(
+                            onPressed: () async {},
+                            icon: Icon(Icons.auto_stories),
+                          ),
                         ],
                       ),
                       SliverList.separated(
@@ -101,11 +88,14 @@ class _HymnPageState extends State<HymnPage> {
                             leadingAndTrailingTextStyle: TextStyle(
                               // TODO: MAnage sizes on different screens
                               fontSize: 16,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             title: Text(hymn.title),
                             onTap: () {
-                              widget.viewModel.setSelectedHymn(hymn);
-                              context.push("/hymns/details");
+                              if (Dimens(context).isCompact ||
+                                  Dimens(context).isMedium) {
+                                context.push("/hymns/details");
+                              }
                             },
                           );
                         },
@@ -115,18 +105,18 @@ class _HymnPageState extends State<HymnPage> {
                     ],
                   ),
                 ),
-                // !(Dimens(context).isCompact || Dimens(context).isMedium)
-                //     ? Flexible(
-                //         flex: 3,
-                //         child: Padding(
-                //           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                //           child: widget.secondScreen,
-                //         ),
-                //       )
-                //     : SizedBox.shrink(),
-                // Dimens(context).isExtraLarge
-                //     ? Flexible(flex: 2, child: widget.thirdScreen)
-                //     : SizedBox.shrink(),
+                !(Dimens(context).isCompact || Dimens(context).isMedium)
+                    ? Flexible(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: widget.secondScreen,
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                Dimens(context).isExtraLarge
+                    ? Flexible(flex: 2, child: widget.thirdScreen)
+                    : SizedBox.shrink(),
               ],
             ),
           );

@@ -29,7 +29,6 @@ class MySliverAppBar extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 32,
                     fontWeight: FontWeight.bold,
                     overflow: TextOverflow.ellipsis,
                   ),

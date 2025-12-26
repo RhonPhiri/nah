@@ -39,13 +39,9 @@ class HymnViewModel extends ChangeNotifier {
   void setSelectedHymnal(Hymnal? selectedHymnal) {
     if (_hymnal != selectedHymnal) {
       _hymnal = selectedHymnal;
-      notifyListeners();
-    }
-  }
 
-  void setSelectedHymn(Hymn? hymn) {
-    if (selectedHymnNotifier.value != hymn) {
-      selectedHymnNotifier.value = hymn;
+      selectedHymnNotifier.value = null;
+      notifyListeners();
     }
   }
 
@@ -81,6 +77,7 @@ class HymnViewModel extends ChangeNotifier {
       switch (result) {
         case Success<List<Hymn>>():
           _hymns = result.data;
+
           _log.fine("Hymn list loaded successfully");
         case Error<List<Hymn>>():
           _log.warning("Failed to load hymns", result.error);

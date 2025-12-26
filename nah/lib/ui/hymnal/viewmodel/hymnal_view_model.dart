@@ -13,24 +13,29 @@ class HymnalViewModel extends ChangeNotifier {
   HymnalViewModel({required HymnalRepository hymnalRepository})
     : _hymnalRepository = hymnalRepository {
     load = Command0<List<Hymnal>>(_load)..execute();
-    selectHymnal = Command1<void, Hymnal>(_selectHymnal);
+    // selectHymnal = Command1<void, Hymnal>(_selectHymnal);
+    selectedHymnal
+      ..addListener(storeSelectedHymnal)
+      ..hasListeners;
   }
 
   List<Hymnal> _hymnals = [];
   List<Hymnal> get hymnals => _hymnals;
 
-  Hymnal? _selectedHymnal;
-  Hymnal? get selectedHymnal => _selectedHymnal;
+  ValueNotifier<Hymnal?> selectedHymnal = ValueNotifier(null);
 
   late final Command0 load;
   late final Command1 selectHymnal;
 
+  /// Method to load the hymnals from the db
+  /// Called upon instantiation of the viewmodel
   Future<Result<List<Hymnal>>> _load() async {
     try {
       final result = await _hymnalRepository.getHymnals();
       if (result is Success<List<Hymnal>>) {
         _hymnals = result.data;
         _log.fine("Loaded hymnals");
+        // After loading the hymnals, fetch the hymnal that was last used in the previous session
         await _getStoredHymnal();
       } else if (result is Error<List<Hymnal>>) {
         _log.warning("Failed to load hymnals", result.error);
@@ -41,46 +46,47 @@ class HymnalViewModel extends ChangeNotifier {
     }
   }
 
+  /// Method to fetch the hymnal that was last used in the previous session
   Future<void> _getStoredHymnal() async {
     try {
       final result = await _hymnalRepository.getStoredHymnal();
 
       switch (result) {
         case Success<Hymnal?>():
-          _selectedHymnal = result.data;
+          // If there is a stored hymnal, assign it to the current selected hymnal
+          selectedHymnal.value = result.data;
         case Error<Hymnal?>():
           _log.warning("Failed to get the stored hymnal id", result.error);
-          await _selectHymnal(_hymnals.first);
+          // An error indicated that no hymnal was stored, probably it is the first ever session for the user
+          // In that case, the first hymnal in the list will be assigned to be the first hymnal
+          selectedHymnal.value = _hymnals.first;
       }
     } on Exception catch (e) {
       _log.warning("Error getting the stored hymnal", e);
     }
   }
 
-  Future<Result<void>> _selectHymnal(Hymnal hymnal) async {
-    if (_selectedHymnal == hymnal) {
-      return Result.success(null);
-    }
+  /// Method to update the selected hymnal
+  /// Intended to cause the hymnal screen to rebuild
+  void storeSelectedHymnal() async {
+    if (selectedHymnal.value != null) {
+      final result = await _hymnalRepository.storeSelectedHymnal(
+        selectedHymnal.value!,
+      );
+      print("object");
 
-    _selectedHymnal = hymnal;
-
-    try {
-      final result = await _hymnalRepository.storeSelectedHymnal(hymnal);
       if (result is Success<void>) {
         _log.fine("Stored the current selected hymnal");
       } else {
         _log.warning("Failed to store the current selected hymnal");
       }
-      return result;
-    } finally {
-      notifyListeners();
     }
   }
 
   @override
   void dispose() {
     _hymnals.clear();
-    _selectedHymnal = null;
+    selectedHymnal.value = null;
     load.clearResult();
     selectHymnal.clearResult();
     super.dispose();

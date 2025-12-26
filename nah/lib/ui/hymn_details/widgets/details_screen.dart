@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:nah/domain/models/hymn/hymn.dart';
-import 'package:nah/ui/hymns/viewmodel/hymn_view_model.dart';
+import 'package:nah/ui/hymn/viewmodel/hymn_view_model.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   const DetailsScreen({super.key, required this.viewModel});
 
   final HymnViewModel viewModel;
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result) {
-        viewModel.setSelectedHymn(null);
-      },
+      onPopInvokedWithResult: (didPop, result) {},
       child: Scaffold(
         appBar: AppBar(),
-        body: HymnColumn(viewModel: viewModel),
+        body: HymnColumn(viewModel: widget.viewModel),
       ),
     );
   }
@@ -30,96 +34,53 @@ class HymnColumn extends StatefulWidget {
 }
 
 class _HymnColumnState extends State<HymnColumn> {
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    final hymns = widget.viewModel.hymns;
-    final selected = widget.viewModel.selectedHymn;
-    final initialIdx = (selected == null)
-        ? 0
-        : (hymns.indexWhere((h) => h.id == selected.id));
-
-    _pageController = PageController(initialPage: initialIdx);
-
-    widget.viewModel.selectedHymnNotifier.addListener(_onSelectedHymnChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.selectedHymnNotifier.removeListener(
-      _onSelectedHymnChanged,
-    );
-
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final hymns = widget.viewModel.hymns;
 
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: hymns.length,
-        onPageChanged: (index) {
-          widget.viewModel.setSelectedHymn(hymns[index]);
-        },
-        itemBuilder: (context, index) {
-          final hymn = hymns[index];
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SelectableRegion(
-                selectionControls: MaterialTextSelectionControls()
-                  ..buildHandle(context, TextSelectionHandleType.collapsed, 16),
-                child: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    hymnTitle(hymn),
+    return widget.viewModel.selectedHymnNotifier.value == null
+        ? Container(color: Colors.amber)
+        : SizedBox(
+            height: MediaQuery.sizeOf(context).height,
+            child: PageView.builder(
+              itemCount: hymns.length,
+              onPageChanged: (index) {},
+              itemBuilder: (context, index) {
+                final hymn = hymns[index];
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SelectableRegion(
+                      selectionControls: MaterialTextSelectionControls()
+                        ..buildHandle(
+                          context,
+                          TextSelectionHandleType.collapsed,
+                          16,
+                        ),
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          hymnTitle(hymn),
 
-                    _englishHymnal(hymn),
+                          _englishHymnal(hymn),
 
-                    _englishTitle(hymn),
+                          _englishTitle(hymn),
 
-                    Divider(thickness: 0),
+                          Divider(thickness: 0),
 
-                    ..._lyricsBuilder(hymn),
+                          ..._lyricsBuilder(hymn),
 
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                    Center(child: _composer(hymn)),
-                  ],
-                ),
-              ),
+                          Center(child: _composer(hymn)),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           );
-        },
-      ),
-    );
-  }
-
-  void _onSelectedHymnChanged() {
-    final selected = widget.viewModel.selectedHymn;
-
-    /// If a user hasn't tapped on a hymn
-    if (selected == null || !mounted || !_pageController.hasClients) return;
-
-    final hymns = widget.viewModel.hymns;
-    final idx = hymns.indexWhere((h) => h.id == selected.id);
-
-    // TODO: Analyze
-    if (idx != -1 &&
-        (_pageController.page?.round() ?? _pageController.initialPage) != idx) {
-      _pageController.animateToPage(
-        idx,
-        duration: Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-      );
-    }
   }
 
   Widget hymnTitle(Hymn hymn) {
