@@ -13,10 +13,7 @@ class HymnalViewModel extends ChangeNotifier {
   HymnalViewModel({required HymnalRepository hymnalRepository})
     : _hymnalRepository = hymnalRepository {
     load = Command0<List<Hymnal>>(_load)..execute();
-    // selectHymnal = Command1<void, Hymnal>(_selectHymnal);
-    selectedHymnal
-      ..addListener(storeSelectedHymnal)
-      ..hasListeners;
+    selectedHymnal.addListener(storeSelectedHymnal);
   }
 
   List<Hymnal> _hymnals = [];
@@ -25,20 +22,21 @@ class HymnalViewModel extends ChangeNotifier {
   ValueNotifier<Hymnal?> selectedHymnal = ValueNotifier(null);
 
   late final Command0 load;
-  late final Command1 selectHymnal;
 
   /// Method to load the hymnals from the db
   /// Called upon instantiation of the viewmodel
   Future<Result<List<Hymnal>>> _load() async {
     try {
       final result = await _hymnalRepository.getHymnals();
-      if (result is Success<List<Hymnal>>) {
-        _hymnals = result.data;
-        _log.fine("Loaded hymnals");
-        // After loading the hymnals, fetch the hymnal that was last used in the previous session
-        await _getStoredHymnal();
-      } else if (result is Error<List<Hymnal>>) {
-        _log.warning("Failed to load hymnals", result.error);
+
+      switch (result) {
+        case Success<List<Hymnal>>():
+          _hymnals = result.data;
+          _log.fine("Loaded hymnals");
+          // After loading the hymnals, fetch the hymnal that was last used in the previous session
+          await _getStoredHymnal();
+        case Error<List<Hymnal>>():
+          _log.warning("Failed to load hymnals", result.error);
       }
       return result;
     } finally {
@@ -66,29 +64,32 @@ class HymnalViewModel extends ChangeNotifier {
     }
   }
 
-  /// Method to update the selected hymnal
-  /// Intended to cause the hymnal screen to rebuild
-  void storeSelectedHymnal() async {
-    if (selectedHymnal.value != null) {
-      final result = await _hymnalRepository.storeSelectedHymnal(
-        selectedHymnal.value!,
-      );
-      print("object");
+  /// Method to update the selected hymnal in shared prefs
+  Future<void> storeSelectedHymnal() async {
+    try {
+      if (selectedHymnal.value != null) {
+        final result = await _hymnalRepository.storeSelectedHymnal(
+          selectedHymnal.value!,
+        );
 
-      if (result is Success<void>) {
-        _log.fine("Stored the current selected hymnal");
-      } else {
-        _log.warning("Failed to store the current selected hymnal");
+        switch (result) {
+          case Success<void>():
+            _log.fine("Stored the current selected hymnal");
+
+          case Error<void>():
+            _log.warning("Failed to store the current selected hymnal");
+        }
       }
+    } on Exception catch (e) {
+      _log.severe("Error on storing the selected hymnal", e);
     }
   }
 
   @override
   void dispose() {
+    selectedHymnal.dispose();
     _hymnals.clear();
-    selectedHymnal.value = null;
     load.clearResult();
-    selectHymnal.clearResult();
     super.dispose();
   }
 }
