@@ -79,11 +79,16 @@ Future<void> main() async {
       for (var j = 1; j <= hymnLength; j++) {
         batch.insert(
           'hymn',
+
           hymnMapper(
             Hymn(
               id: j,
               title: 'HYMN_$j',
-              details: {'meta': 'm$j'},
+              details: {
+                "sourceRef": "$j NEH",
+                "sourceTitle": "TITLE",
+                "composer": "TEST_COMPOSER",
+              },
               lyrics: {'verse': 'v$j'},
             ),
             i,

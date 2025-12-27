@@ -21,7 +21,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: router,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        colorScheme: ColorScheme(
+          brightness: Brightness.light,
+          primary: Colors.grey.shade400,
+          onPrimary: Colors.black,
+          secondary: Colors.grey.shade300,
+          onSecondary: Colors.black,
+          error: const Color(0xFFFA7B72),
+          onError: Colors.black,
+          surface: Colors.grey.shade50,
+          onSurface: Colors.black,
+        ),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

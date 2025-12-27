@@ -15,12 +15,10 @@ abstract class Command<T> extends ChangeNotifier {
   bool _running = false;
   bool get running => _running;
 
-  /// Variabe to capture the error that might have arose on execution of the action
-  bool _error = false;
+
   bool get error => _result is Error;
 
-  /// bool to hold the state of completion of executing a task
-  bool _completed = false;
+
   bool get completed => _result is Success;
 
   Future<void> _execute(Future<Result<T>> Function() action) async {
@@ -33,7 +31,7 @@ abstract class Command<T> extends ChangeNotifier {
 
     try {
       _result = await action();
-      _completed = true;
+
     } finally {
       _running = false;
       notifyListeners();

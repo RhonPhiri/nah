@@ -66,10 +66,7 @@ List<SingleChildWidget> get providers {
       create: (context) => HymnalViewModel(hymnalRepository: context.read()),
     ),
     ChangeNotifierProvider(
-      create: (context) => HymnViewModel(
-        hymnRepository: context.read(),
-        hymnalRepository: context.read(),
-      ),
+      create: (context) => HymnViewModel(hymnRepository: context.read()),
     ),
   ];
 }

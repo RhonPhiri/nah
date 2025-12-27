@@ -20,7 +20,7 @@ void main() {
 
       expect(result, isA<Success>());
       expect(result.asSuccess.data.length, 1);
-      expect(result.asSuccess.data.first.details["source"], "ENGLISH_HYMNAL");
+      expect(result.asSuccess.data.first.details["sourceRef"], "2 REF");
     });
 
     test('should get a specific hymns', () async {
@@ -28,7 +28,7 @@ void main() {
 
       expect(result, isA<Success>());
       expect(result.asSuccess.data.length, 1);
-      expect(result.asSuccess.data.first.details["source"], "ENGLISH_HYMNAL");
+      expect(result.asSuccess.data.first.details["sourceRef"], "2 REF");
     });
   });
 }

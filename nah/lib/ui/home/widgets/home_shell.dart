@@ -43,6 +43,19 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final index = widget.navigationShell.currentIndex;
+    if (_pageController.hasClients && _pageController.page?.round() != index) {
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -95,7 +108,7 @@ class _HomeShellState extends State<HomeShell> {
                     selectedIndex: widget.navigationShell.currentIndex,
                     onDestinationSelected: _onDestinationSelected,
                   ),
-                  VerticalDivider(),
+                  VerticalDivider(color: Colors.grey.shade400, width: 0.5),
                   Flexible(
                     child: PageView(
                       controller: _pageController,

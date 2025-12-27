@@ -3,8 +3,8 @@
         "id": 1,
         "title": "Wanthengwa wakulindizga",
         "details": {
-            "englishHymnal": "424NEH",
-            "englishTitle": "The Bride has Waited",
+            "sourceRef": "424NEH",
+            "sourceTitle": "The Bride has Waited",
             "composer": null
         },
         "lyrics": {
@@ -21,8 +21,8 @@
         "id": 2,
         "title": "Mitima yithu",
         "details": {
-            "englishHymnal": "33HC",
-            "englishTitle": "Our hearts sing with joy",
+            "sourceRef": "33HC",
+            "sourceTitle": "Our hearts sing with joy",
             "composer": null
         },
         "lyrics": {
@@ -37,8 +37,8 @@
         "id": 3,
         "title": "M'nditore Fumu ndibe winu",
         "details": {
-            "englishHymnal": "37HC",
-            "englishTitle": "Take my heart Lord",
+            "sourceRef": "37HC",
+            "sourceTitle": "Take my heart Lord",
             "composer": null
         },
         "lyrics": {
@@ -52,8 +52,8 @@
         "id": 4,
         "title": "Tikwimba nachimwemwe",
         "details": {
-            "englishHymnal": "47HC",
-            "englishTitle": "We raise a joyful chorus",
+            "sourceRef": "47HC",
+            "sourceTitle": "We raise a joyful chorus",
             "composer": null
         },
         "lyrics": {
@@ -68,8 +68,8 @@
         "id": 5,
         "title": "Dada mukandisola",
         "details": {
-            "englishHymnal": "73HC",
-            "englishTitle": "Tis Thee who chose me Father",
+            "sourceRef": "73HC",
+            "sourceTitle": "Tis Thee who chose me Father",
             "composer": null
         },
         "lyrics": {

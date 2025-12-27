@@ -28,10 +28,6 @@ class _HymnalScreenState extends State<HymnalScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !Dimens(context).isExtraLarge,
-      onPopInvokedWithResult: (didPop, result) {
-        // if (didPop) return result;
-      },
       child: Scaffold(
         body: ListenableBuilder(
           listenable: widget.viewModel.load,
@@ -90,6 +86,6 @@ class _HymnalScreenState extends State<HymnalScreen> {
   }
 
   void _onHymnalSelected() async {
-    if (mounted) print("Pop hymnal screen");
+    if (mounted && !Dimens(context).isExtraLarge) context.pop();
   }
 }

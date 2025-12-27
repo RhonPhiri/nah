@@ -13,7 +13,7 @@ class HymnalViewModel extends ChangeNotifier {
   HymnalViewModel({required HymnalRepository hymnalRepository})
     : _hymnalRepository = hymnalRepository {
     load = Command0<List<Hymnal>>(_load)..execute();
-    selectedHymnal.addListener(storeSelectedHymnal);
+    selectedHymnal.addListener(_storeSelectedHymnal);
   }
 
   List<Hymnal> _hymnals = [];
@@ -34,7 +34,8 @@ class HymnalViewModel extends ChangeNotifier {
           _hymnals = result.data;
           _log.fine("Loaded hymnals");
           // After loading the hymnals, fetch the hymnal that was last used in the previous session
-          await _getStoredHymnal();
+          // Call this method only if the notifier is currently null, probably at the startup
+          if (selectedHymnal.value == null) await _getStoredHymnal();
         case Error<List<Hymnal>>():
           _log.warning("Failed to load hymnals", result.error);
       }
@@ -65,7 +66,7 @@ class HymnalViewModel extends ChangeNotifier {
   }
 
   /// Method to update the selected hymnal in shared prefs
-  Future<void> storeSelectedHymnal() async {
+  Future<void> _storeSelectedHymnal() async {
     try {
       if (selectedHymnal.value != null) {
         final result = await _hymnalRepository.storeSelectedHymnal(
@@ -87,6 +88,7 @@ class HymnalViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    selectedHymnal.removeListener(_storeSelectedHymnal);
     selectedHymnal.dispose();
     _hymnals.clear();
     load.clearResult();

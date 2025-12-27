@@ -9,7 +9,6 @@ Hymn hymnFromMap(Map<String, dynamic> map) {
       "title": String title,
       "details": String details,
       "lyrics": String lyrics,
-      "hymnalId": int hymnalId,
     } =>
       Hymn(
         id: id,

@@ -3,8 +3,8 @@
         "id": 1,
         "title": "Dzukani Ana a Mfumu",
         "details": {
-            "englishHymnal": "522NEH",
-            "englishTitle": "Awake! Sons of the Kingdom",
+            "sourceRef": "522NEH",
+            "sourceTitle": "Awake! Sons of the Kingdom",
             "composer": null
         },
         "lyrics": {
@@ -20,8 +20,8 @@
         "id": 2,
         "title": "Ku Zioni sangalala",
         "details": {
-            "englishHymnal": "02NAH",
-            "englishTitle": "Rise zion raise your voice",
+            "sourceRef": "02NAH",
+            "sourceTitle": "Rise zion raise your voice",
             "composer": null
         },
         "lyrics": {
@@ -37,8 +37,8 @@
         "id": 3,
         "title": "Uka konzekeratu",
         "details": {
-            "englishHymnal": "03NAH",
-            "englishTitle": "Rise prepare yourself alright",
+            "sourceRef": "03NAH",
+            "sourceTitle": "Rise prepare yourself alright",
             "composer": null
         },
         "lyrics": {
@@ -55,8 +55,8 @@
         "id": 4,
         "title": "Bvalani za nkhondo zanu",
         "details": {
-            "englishHymnal": "410NEH",
-            "englishTitle": "Gird on your Armour",
+            "sourceRef": "33HC",
+            "sourceTitle": "Gird on your Armour",
             "composer": null
         },
         "lyrics": {
@@ -73,8 +73,8 @@
         "id": 5,
         "title": "Mkwati adzakumbukirani",
         "details": {
-            "englishHymnal": "425NEH",
-            "englishTitle": "The Bridegroom comes! Remember His word!",
+            "sourceRef": "425NEH",
+            "sourceTitle": "The Bridegroom comes! Remember His word!",
             "composer": null
         },
         "lyrics": {

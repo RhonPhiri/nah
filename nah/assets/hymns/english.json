@@ -3,8 +3,8 @@
         "id": 1,
         "title": "Adoration",
         "details": {
-            "englishHymnal": null,
-            "englishTitle": null,
+            "sourceRef": null,
+            "sourceTitle": null,
             "composer": "verse 1: John S Monsell (1811-1875)\nverse 2: Ken Bible (b. 1950)\nref. Psalm 96 : 9"
         },
         "lyrics": {
@@ -19,8 +19,8 @@
         "id": 2,
         "title": "All creature of our God and King",
         "details": {
-            "englishHymnal": null,
-            "englishTitle": null,
+            "sourceRef": null,
+            "sourceTitle": null,
             "composer": "Francis of Assisi (1182-1226)\ntransl. William H Draper (1855-1933)\nfrom Geistliche Kirchengesänge, Cologne 1623\narr. Ralph Vaughan Williams (1872-1958)"
         },
         "lyrics": {
